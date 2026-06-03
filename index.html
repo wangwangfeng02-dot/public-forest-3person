@@ -1,585 +1,974 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>真实3人公共森林投入任务 V11</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>真实3人公共森林投入任务</title>
   <style>
-    :root { --green:#166534; --green2:#15803d; --bg:#f3f7f4; --text:#1f2937; --muted:#64748b; --line:#dbe4dd; }
     * { box-sizing: border-box; }
-    body { margin:0; font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif; background:var(--bg); color:var(--text); }
-    .page { max-width:920px; margin:34px auto; background:#fff; border-radius:18px; padding:34px 42px; box-shadow:0 10px 30px rgba(15,23,42,.08); }
-    h1 { margin:0 0 20px; color:#14532d; font-size:28px; line-height:1.35; }
-    h2 { margin:26px 0 14px; color:#14532d; font-size:22px; }
-    h3 { margin:20px 0 10px; color:#166534; font-size:18px; }
-    p, li { font-size:17px; line-height:1.8; }
-    .muted { color:var(--muted); font-size:14px; }
-    .box { border:1px solid #dbeafe; background:#eff6ff; border-radius:14px; padding:16px 18px; margin:18px 0; }
-    .greenbox { border-left:5px solid var(--green2); background:#f0fdf4; border-radius:12px; padding:16px 18px; margin:18px 0; }
-    .warn { border-left:5px solid #f97316; background:#fff7ed; border-radius:12px; padding:14px 16px; margin:18px 0; }
-    button { border:none; background:var(--green); color:#fff; padding:12px 24px; margin:22px 10px 0 0; border-radius:10px; font-size:16px; cursor:pointer; }
-    button:hover { background:#14532d; }
-    button.secondary { background:#64748b; }
-    label { font-size:16px; line-height:1.8; }
-    input[type="text"], input[type="number"], select { width:100%; padding:11px 12px; border:1px solid #cbd5e1; border-radius:8px; margin:6px 0 16px; font-size:16px; }
-    input[type="radio"] { margin-right:8px; }
-    table { width:100%; border-collapse:collapse; margin:18px 0; }
-    th, td { border:1px solid var(--line); padding:10px; text-align:center; font-size:15px; }
-    th { background:#f8fafc; }
-    .choice-grid { display:grid; grid-template-columns:repeat(11,1fr); gap:8px; margin:20px 0; }
-    .choice { padding:14px 0; text-align:center; background:#e2e8f0; color:#0f172a; border-radius:10px; cursor:pointer; border:2px solid transparent; font-size:18px; }
-    .choice:hover { background:#cbd5e1; }
-    .choice.selected { background:#bbf7d0; border-color:#16a34a; font-weight:700; color:#14532d; }
-    .bar-wrap { width:100%; height:18px; background:#e2e8f0; border-radius:10px; overflow:hidden; margin:8px 0 4px; }
-    .bar { height:18px; background:#16a34a; width:0%; transition:width .25s ease; }
-    .radio-block { margin:16px 0; padding:14px; border:1px solid #e5e7eb; border-radius:12px; background:#fafafa; }
-    .scale-item { margin:18px 0; padding:16px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; }
-    .scale-options { display:flex; justify-content:space-between; align-items:flex-start; gap:4px; margin-top:10px; }
-    .scale-options label { text-align:center; font-size:14px; flex:1; }
-    .scale-anchors { display:flex; justify-content:space-between; color:#64748b; font-size:14px; margin-top:4px; }
-    .footer { position:fixed; right:10px; bottom:8px; color:#94a3b8; font-size:12px; background:rgba(255,255,255,.85); padding:3px 6px; border-radius:6px; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      background: #f4f7f6;
+      color: #1f2933;
+    }
+    .page {
+      max-width: 920px;
+      margin: 36px auto;
+      background: #fff;
+      padding: 38px 46px;
+      border-radius: 18px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.08);
+    }
+    h1 { font-size: 28px; margin: 0 0 22px; color: #0f5132; }
+    h2 { font-size: 21px; margin: 24px 0 14px; color: #14532d; }
+    p, li { font-size: 17px; line-height: 1.85; }
+    button {
+      background: #166534;
+      color: #fff;
+      border: none;
+      padding: 13px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      margin-right: 10px;
+    }
+    button:hover { background: #14532d; }
+    button.secondary { background: #64748b; }
+    button.secondary:hover { background: #475569; }
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      margin: 8px 0 18px;
+      font-size: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+    }
+    label { font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { border: 1px solid #dbe3ea; padding: 10px; text-align: center; font-size: 15px; }
+    th { background: #f1f5f9; }
+    .highlight {
+      background: #edf7ed;
+      border-left: 5px solid #2f855a;
+      padding: 16px 18px;
+      margin: 20px 0;
+      border-radius: 10px;
+      font-size: 17px;
+      line-height: 1.8;
+    }
+    .warning {
+      background: #fff7ed;
+      border-left: 5px solid #f97316;
+      padding: 14px 18px;
+      margin: 20px 0;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .muted { color: #64748b; font-size: 14px; }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 8px;
+      margin: 24px 0;
+    }
+    .choice-btn {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-radius: 10px;
+      padding: 14px 0;
+      font-size: 18px;
+      cursor: pointer;
+      text-align: center;
+      border: 2px solid transparent;
+      user-select: none;
+    }
+    .choice-btn:hover { background: #cbd5e1; }
+    .choice-btn.selected {
+      background: #bbf7d0;
+      border-color: #16a34a;
+      color: #14532d;
+      font-weight: bold;
+    }
+    .progress-box {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 18px 0;
+      border: 1px solid #e2e8f0;
+    }
+    .bar-wrap {
+      width: 100%;
+      height: 18px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .bar { height: 18px; background: #16a34a; width: 0%; transition: width .3s ease; }
+    .radio-row { margin: 16px 0; line-height: 1.9; }
+    .radio-row input { width: auto; margin-right: 8px; }
+    .scale-row {
+      margin: 18px 0;
+      padding: 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+    .scale-options {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .scale-options input { width: auto; margin: 3px; }
+    .scale-anchor {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+    .version {
+      position: fixed;
+      right: 10px;
+      bottom: 8px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
-  <div id="app"><div class="page"><h1>页面加载中……</h1><p>如果长时间停留，请刷新页面。</p></div></div>
-  <div class="footer">V10 fixed 3-person matching · 2 blocks × 8 trials</div>
+  <div id="app"></div>
+  <div class="version">V12 GitHub Pages · norm text updated</div>
 
-<script type="module">
-/***********************
- * Firebase 配置：单文件内置，不再依赖 firebase-config.js
- ***********************/
-const firebaseConfig = {
-  apiKey: "AIzaSyBHY2cyfWiaUKsYmiq5gGQrNX5dOIGFb4A",
-  authDomain: "dyadic-forest-study.firebaseapp.com",
-  databaseURL: "https://dyadic-forest-study-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "dyadic-forest-study",
-  storageBucket: "dyadic-forest-study.firebasestorage.app",
-  messagingSenderId: "869925379541",
-  appId: "1:869925379541:web:9d72b7c8e91d029f69b15c",
-  measurementId: "G-9FEZ2CYLYF"
-};
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      set,
+      update,
+      get,
+      onValue,
+      runTransaction,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/***********************
- * 实验参数
- * 当前：2个block，每个block 8轮。
- * 如需正式4个项目，可改为 BLOCKS=4，并补充4个PROJECTS。
- ***********************/
-const BASE_PATH = "public_forest_3person_v11_content_updates";
-const GROUP_SIZE = 3;
-const CONDITIONS = ["control", "static", "dynamic"];
-const BLOCKS = 2;
-const TRIALS_PER_BLOCK = 8;
-const PROJECT_TARGET = 120; // 3人 × 8轮 × 平均5点 = 120
-const DECISION_TIMEOUT_MS = 15000;
+    const firebaseConfig = {
+      apiKey: "AIzaSyBHY2cyfWiaUKsYmiq5gGQrNX5dOIGFb4A",
+      authDomain: "dyadic-forest-study.firebaseapp.com",
+      databaseURL: "https://dyadic-forest-study-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "dyadic-forest-study",
+      storageBucket: "dyadic-forest-study.firebasestorage.app",
+      messagingSenderId: "869925379541",
+      appId: "1:869925379541:web:9d72b7c8e91d029f69b15c",
+      measurementId: "G-9FEZ2CYLYF"
+    };
 
-const PROJECTS = [
-  { name:"城市防护林保护", desc:"本项目关注城市周边防护林保护。防护林可以帮助改善空气质量、减少风沙，并维护城市周边生态环境。" },
-  { name:"水源涵养林修复", desc:"本项目关注水源涵养林修复。水源涵养林可以帮助保持水土、涵养水源，并维护区域生态平衡。" }
-];
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getDatabase(fbApp);
 
-let fb = null;
-let state = {
-  participantId: "",
-  groupId: "",
-  groupNumber: null,
-  roleId: "",
-  condition: "",
-  info: {},
-  blockIndex: 1,
-  trialIndex: 1,
-  selectedDonation: null,
-  trialStartTime: null,
-  questionnaireResponses: {},
-  listenerKeys: new Set(),
-  enteredGroupIntro: false
-};
+    const BASE_PATH = "public_forest_3person_v12_norm_update";
+    const GROUP_SIZE = 3;
+    const BLOCKS = 2;
+    const TRIALS_PER_BLOCK = 8;
+    const BLOCK_TARGET = 120;
+    const MATCH_TIMEOUT_MS = 5 * 60 * 1000;
+    const CONDITIONS = ["control", "static", "dynamic"];
 
-const app = document.getElementById("app");
-function render(html) { app.innerHTML = `<div class="page">${html}</div>`; window.scrollTo(0,0); }
-function uid(prefix) { return `${prefix}_${Math.random().toString(36).slice(2,10)}_${Date.now()}`; }
-function pct(x, y) { return Math.max(0, Math.min(100, Math.round((Number(x)||0)/(Number(y)||1)*100))); }
-function esc(s) { return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
-function conditionText(c) { return c === "control" ? "控制组" : c === "static" ? "静态规范组" : "动态规范组"; }
-function absoluteTrial(block, trial) { return (block - 1) * TRIALS_PER_BLOCK + trial; }
+    const PROJECTS = [
+      {
+        name: "城市防护林保护",
+        desc: "本项目关注城市周边防护林保护。防护林可以帮助改善空气质量、减少风沙，并维护城市周边生态环境。"
+      },
+      {
+        name: "水源涵养林修复",
+        desc: "本项目关注水源涵养林修复。水源涵养林可以帮助保持水土、涵养水源，并维护区域生态平衡。"
+      }
+    ];
 
-async function ensureFirebase() {
-  if (fb) return fb;
-  try {
-    const appMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    const dbMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
-    const fapp = appMod.initializeApp(firebaseConfig);
-    const db = dbMod.getDatabase(fapp);
-    fb = { ...dbMod, db };
-    return fb;
-  } catch (err) {
-    render(`<h1>Firebase 加载失败</h1><div class="warn"><p>${esc(err.message)}</p></div><p>请检查网络是否能访问 Google Firebase SDK，或换浏览器/网络后重试。</p>`);
-    throw err;
-  }
-}
+    const questionnaireItems = [
+      { key: "future_expectation_1", text: "在未来，你认为人们会在多大程度上努力去保护环境？", left: "完全不会", right: "非常会" },
 
-async function dbSet(path, value) { const { ref, set, db } = await ensureFirebase(); return set(ref(db, `${BASE_PATH}/${path}`), value); }
-async function dbUpdate(path, value) { const { ref, update, db } = await ensureFirebase(); return update(ref(db, `${BASE_PATH}/${path}`), value); }
-async function dbGet(path) { const { ref, get, db } = await ensureFirebase(); const s = await get(ref(db, `${BASE_PATH}/${path}`)); return s.val(); }
-async function dbServerTimestamp() { const { serverTimestamp } = await ensureFirebase(); return serverTimestamp(); }
+      { key: "collective_self_efficacy_1", text: "我们可以共同解决环境问题。" },
+      { key: "collective_self_efficacy_2", text: "我们有足够的力量解决环境问题。" },
+      { key: "collective_self_efficacy_3", text: "我们可以解决破坏环境带来的问题。" },
 
-async function saveProgress(page, extra={}) {
-  if (!state.groupId || !state.participantId) return;
-  await dbUpdate(`groups/${state.groupId}/members/${state.participantId}`, { last_page: page, last_update: await dbServerTimestamp(), ...extra });
-}
+      { key: "response_efficacy_1", text: "我认为我的行动会对气候变化产生影响。" },
+      { key: "response_efficacy_2", text: "我认为我的行动会对我如何感受和思考气候变化及一般环境问题产生积极影响。" },
+      { key: "response_efficacy_3", text: "我在社区中减少气候变化影响的行动会鼓励他人也采取行动减少全球变暖的影响。" },
 
-function listen(path, callback) {
-  ensureFirebase().then(({ ref, onValue, db }) => {
-    onValue(ref(db, `${BASE_PATH}/${path}`), callback);
-  });
-}
+      { key: "green_self_identity_1", text: "我认为自己是一个非常关心环境问题的人。" },
+      { key: "green_self_identity_2", text: "环保是我身份中重要的一部分。" },
+      { key: "green_self_identity_3", text: "我认同环保组织所倡导的目标。" },
+      { key: "green_self_identity_4", text: "我认为自己是一个环保消费者。" },
+      { key: "green_self_identity_5", text: "我是那种会采取环保行为的人。" },
 
-/*********************** 页面流程 ***********************/
-function pageWelcome() {
-  render(`
-    <h1>欢迎参加实验</h1>
-    <p>欢迎参加本研究。</p>
-    <p>本研究关注人们在公共环境保护情境中的决策行为。实验过程中，你将和另外两名参与者组成一个 3 人小组，共同完成公共森林投入任务。</p>
-    <p>请认真阅读屏幕上的内容，并根据自己的真实想法做出选择。</p>
-    <button id="go">开始实验</button>
-  `);
-  document.getElementById("go").onclick = pageConsent;
-}
+      { key: "personal_norm_1", text: "我觉得自己有责任采取环保行为。" },
+      { key: "personal_norm_2", text: "如果我不采取环保行为，我会感到内疚。" },
+      { key: "personal_norm_3", text: "保护环境是我应该做的事情。" },
 
-function pageConsent() {
-  render(`
-    <h1>实验知情同意</h1>
-    <p>在本研究中，你将完成若干轮公共森林投入决策任务。你的选择将用于研究人们在环境保护情境下的决策过程。</p>
-    <p>实验数据仅用于科学研究，所有数据将匿名保存。你可以在任何时候退出实验，但只有认真完成全部任务的数据才会被纳入分析。</p>
-    <button id="go">我已阅读并同意参加实验</button>
-  `);
-  document.getElementById("go").onclick = pageBasicInfo;
-}
+      { key: "dynamic_norm_manipulation_1", text: "我认为公共森林捐赠正在变得越来越普遍。" },
+      { key: "dynamic_norm_manipulation_2", text: "我认为未来会有更多人参与公共森林捐赠。" },
+      { key: "static_norm_manipulation_1", text: "我认为目前已有不少人参与公共森林捐赠。" },
+      { key: "static_norm_manipulation_2", text: "我认为公共森林捐赠在当前参与者中较为常见。" },
 
-function pageBasicInfo() {
-  render(`
-    <h1>基本信息</h1>
-    <label>姓名 / 编号</label><input id="name" type="text" />
-    <label>年龄</label><input id="age" type="number" />
-    <label>性别</label><select id="gender"><option value="">请选择</option><option>男</option><option>女</option><option>其他</option><option>不愿透露</option></select>
-    <label>学校</label><input id="school" type="text" />
-    <label>学院 / 专业</label><input id="major" type="text" />
-    <label>年级</label><input id="grade" type="text" />
-    <button id="go">下一页</button>
-  `);
-  document.getElementById("go").onclick = async () => {
-    const name = document.getElementById("name").value.trim();
-    const age = document.getElementById("age").value.trim();
-    const gender = document.getElementById("gender").value;
-    const school = document.getElementById("school").value.trim();
-    const major = document.getElementById("major").value.trim();
-    const grade = document.getElementById("grade").value.trim();
-    if (!name || !age || !gender) { alert("请至少填写姓名/编号、年龄和性别。"); return; }
-    state.participantId = uid("P");
-    state.info = { name, age, gender, school, major, grade };
-    await matchGroup();
-  };
-}
+      { key: "personal_influence_1", text: "我觉得自己的捐赠会影响公共森林的状态。" },
+      { key: "personal_influence_2", text: "我觉得我在任务中的选择会影响最终环保捐赠。" },
+      { key: "personal_influence_3", text: "我觉得自己的行为能够帮助公共森林维持下去。" },
 
-async function matchGroup() {
-  await ensureFirebase();
-  render(`<h1>正在匹配小组成员</h1><p>系统正在为你匹配另外两名参与者。</p><p>匹配成功后，你们三人将组成一个小组，共同完成公共森林投入任务。</p><div class="warn" id="matchStatus">正在加入匹配队列……</div>`);
+      { key: "partner_influence_1", text: "我觉得其他成员的选择会影响我的捐赠决策。" },
+      { key: "partner_influence_2", text: "我会根据其他成员上一轮的捐赠情况调整自己的选择。" },
+      { key: "partner_influence_3", text: "我觉得我们三人的选择共同决定了公共森林的结果。" },
 
-  const { ref, runTransaction, db, serverTimestamp } = await ensureFirebase();
-  const matchRef = ref(db, `${BASE_PATH}/matchState`);
+      { key: "seriousness", text: "你在任务中是否认真做出了选择？", left: "非常不认真", right: "非常认真" },
+      { key: "suspicion", text: "你是否怀疑任务中的信息或设置？", left: "完全不怀疑", right: "非常怀疑" },
+      { key: "noticed_stage_difference", text: "你是否注意到两个任务阶段之间存在不同？", left: "完全没有注意到", right: "非常明显地注意到" },
+      { key: "background_info_influence", text: "你认为任务开始前的背景信息是否影响了你的选择？", left: "完全没有影响", right: "影响非常大" }
+    ];
 
-  const tx = await runTransaction(matchRef, (cur) => {
-    const now = Date.now();
+    const state = {
+      participantId: "",
+      groupId: "",
+      roleId: "",
+      slot: null,
+      condition: "",
+      groupNumber: null,
+      info: {},
+      currentBlock: 1,
+      currentTrial: 1,
+      selectedDonation: null,
+      trialStartTime: null
+    };
 
-    function makeNewGroup(counter) {
-      const groupNumber = (counter || 0) + 1;
-      const condition = CONDITIONS[(groupNumber - 1) % CONDITIONS.length];
-      return {
-        counter: groupNumber,
-        openGroup: {
-          groupId: uid("G"),
-          groupNumber,
-          condition,
-          status: "waiting",
-          createdAt: now,
-          slots: { "1": state.participantId }
+    const appDiv = document.getElementById("app");
+
+    function uid(prefix) {
+      return `${prefix}_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
+    }
+
+    function render(html) {
+      appDiv.innerHTML = `<div class="page">${html}</div>`;
+      window.scrollTo(0, 0);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function percent(num, den) {
+      if (!den || den <= 0) return 0;
+      return Math.min(100, Math.round((Number(num) / Number(den)) * 100));
+    }
+
+    function conditionName(condition) {
+      if (condition === "control") return "控制组";
+      if (condition === "static") return "静态规范组";
+      if (condition === "dynamic") return "动态规范组";
+      return condition;
+    }
+
+    async function saveProgress(pageName, extra = {}) {
+      if (!state.groupId || !state.participantId) return;
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
+        last_page: pageName,
+        last_update: serverTimestamp(),
+        ...extra
+      });
+    }
+
+    async function getGroupData() {
+      const snap = await get(ref(db, `${BASE_PATH}/groups/${state.groupId}`));
+      return snap.val() || {};
+    }
+
+    function pageWelcome() {
+      render(`
+        <h1>欢迎参加实验</h1>
+        <p>欢迎参加本研究。</p>
+        <p>本研究关注人们在公共环境保护情境中的决策行为。实验过程中，你将和另外两名参与者组成一个 3 人小组，共同完成公共森林投入任务。</p>
+        <p>请认真阅读屏幕上的内容，并根据自己的真实想法做出选择。</p>
+        <button id="startBtn">开始实验</button>
+      `);
+      document.getElementById("startBtn").onclick = pageConsent;
+    }
+
+    function pageConsent() {
+      render(`
+        <h1>实验知情同意</h1>
+        <p>在本研究中，你将完成若干轮公共森林投入决策任务。你的选择将用于研究人们在环境保护情境下的决策过程。</p>
+        <p>实验数据仅用于科学研究，所有数据将匿名保存。你可以在任何时候退出实验，但只有认真完成全部任务的数据才会被纳入分析。</p>
+        <p>如果你同意参加本实验，请点击下方按钮继续。</p>
+        <button id="agreeBtn">我已阅读并同意参加实验</button>
+      `);
+      document.getElementById("agreeBtn").onclick = pageBasicInfo;
+    }
+
+    function pageBasicInfo() {
+      render(`
+        <h1>基本信息</h1>
+        <label>姓名 / 编号</label>
+        <input id="name" placeholder="请输入姓名或编号" />
+        <label>年龄</label>
+        <input id="age" type="number" placeholder="请输入年龄" />
+        <label>性别</label>
+        <select id="gender">
+          <option value="">请选择</option>
+          <option value="男">男</option>
+          <option value="女">女</option>
+          <option value="其他">其他</option>
+          <option value="不愿透露">不愿透露</option>
+        </select>
+        <label>学校</label>
+        <input id="school" placeholder="请输入学校" />
+        <label>学院 / 专业</label>
+        <input id="major" placeholder="请输入学院或专业" />
+        <label>年级</label>
+        <input id="grade" placeholder="请输入年级" />
+        <button id="nextBtn">下一页</button>
+      `);
+      document.getElementById("nextBtn").onclick = async () => {
+        const name = document.getElementById("name").value.trim();
+        const age = document.getElementById("age").value.trim();
+        const gender = document.getElementById("gender").value;
+        const school = document.getElementById("school").value.trim();
+        const major = document.getElementById("major").value.trim();
+        const grade = document.getElementById("grade").value.trim();
+        if (!name || !age || !gender) {
+          alert("请至少填写姓名/编号、年龄和性别。");
+          return;
+        }
+        state.participantId = uid("P");
+        state.info = { name, age, gender, school, major, grade };
+        await joinGroup();
+      };
+    }
+
+    async function joinGroup() {
+      render(`
+        <h1>正在匹配小组成员</h1>
+        <p>系统正在为你匹配另外两名参与者。</p>
+        <p>匹配成功后，你们三人将组成一个小组，共同完成公共森林投入任务。</p>
+        <div class="warning" id="matchStatus">正在加入匹配队列……</div>
+      `);
+
+      const now = Date.now();
+      const matchRef = ref(db, `${BASE_PATH}/matchState`);
+      const result = await runTransaction(matchRef, (current) => {
+        const expired = current?.createdAtMs && (now - current.createdAtMs > MATCH_TIMEOUT_MS);
+        const needNewGroup = !current || !current.activeGroupId || current.status === "full" || (current.nextSlot || 1) > GROUP_SIZE || expired;
+
+        if (needNewGroup) {
+          const groupCounter = (current?.groupCounter || 0) + 1;
+          const groupId = uid("G");
+          const condition = CONDITIONS[(groupCounter - 1) % CONDITIONS.length];
+          return {
+            groupCounter,
+            activeGroupId: groupId,
+            condition,
+            nextSlot: 2,
+            status: "waiting",
+            createdAtMs: now,
+            activeMembers: {
+              [state.participantId]: 1
+            }
+          };
+        }
+
+        current.activeMembers = current.activeMembers || {};
+        if (!current.activeMembers[state.participantId]) {
+          const slot = current.nextSlot || 1;
+          current.activeMembers[state.participantId] = slot;
+          current.nextSlot = slot + 1;
+          current.status = slot >= GROUP_SIZE ? "full" : "waiting";
+        }
+        return current;
+      });
+
+      const matchData = result.snapshot.val();
+      state.groupId = matchData.activeGroupId;
+      state.condition = matchData.condition;
+      state.groupNumber = matchData.groupCounter;
+      state.slot = matchData.activeMembers[state.participantId];
+      state.roleId = `成员${state.slot}`;
+
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}`), {
+        groupId: state.groupId,
+        groupNumber: state.groupNumber,
+        condition: state.condition,
+        status: matchData.status,
+        createdAtMs: matchData.createdAtMs,
+        updatedAt: serverTimestamp()
+      });
+
+      await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
+        participantId: state.participantId,
+        roleId: state.roleId,
+        slot: state.slot,
+        info: state.info,
+        joinedAt: serverTimestamp(),
+        last_page: "matched"
+      });
+
+      await set(ref(db, `${BASE_PATH}/participants/${state.participantId}`), {
+        participantId: state.participantId,
+        groupId: state.groupId,
+        groupNumber: state.groupNumber,
+        condition: state.condition,
+        roleId: state.roleId,
+        slot: state.slot,
+        info: state.info,
+        joinedAt: serverTimestamp()
+      });
+
+      if (matchData.status === "full") {
+        await update(ref(db, `${BASE_PATH}/groups/${state.groupId}`), {
+          status: "full",
+          formedAt: serverTimestamp()
+        });
+      }
+
+      listenForGroupFull();
+    }
+
+    function listenForGroupFull() {
+      const membersRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/members`);
+      let moved = false;
+      const unsubscribe = onValue(membersRef, async (snap) => {
+        const members = snap.val() || {};
+        const count = Object.keys(members).length;
+        const statusEl = document.getElementById("matchStatus");
+        if (statusEl) statusEl.textContent = `当前状态：等待成员加入（${count}/${GROUP_SIZE}）`;
+        if (!moved && count >= GROUP_SIZE) {
+          moved = true;
+          unsubscribe();
+          await update(ref(db, `${BASE_PATH}/groups/${state.groupId}`), { status: "full", formedAt: serverTimestamp() });
+          pageGroupIntro();
+        }
+      });
+    }
+
+    async function pageGroupIntro() {
+      await saveProgress("group_intro");
+      render(`
+        <h1>你的小组</h1>
+        <p>你已经成功加入一个 3 人小组。</p>
+        <p>为保护隐私，系统将使用匿名编号显示小组成员：</p>
+        <div class="highlight">
+          <p>你：${escapeHtml(state.roleId)}</p>
+          <p>另外两名参与者：其他匿名成员</p>
+        </div>
+        <p>在任务过程中，你们三人将分别做出决策。公共森林账户中的累计投入将反映小组对公共森林项目的支持程度。</p>
+        <p>请注意，任务过程中不能与其他成员交流。</p>
+        <button id="nextBtn">继续</button>
+      `);
+      document.getElementById("nextBtn").onclick = pageTaskBackground;
+    }
+
+    async function pageTaskBackground() {
+      await saveProgress("task_background");
+      render(`
+        <h1>公共森林投入任务</h1>
+        <p>在接下来的任务中，你将和另外两名成员共同参与公共森林投入任务。</p>
+        <p>公共森林账户代表一项环境保护资源。每位成员都可以选择将一部分个人资源投入公共森林账户，用于支持森林保护和生态恢复。</p>
+        <p>投入公共森林账户的资源越多，代表对公共森林项目的支持越多；保留的资源越多，你获得的个人积分越多。</p>
+        <button id="nextBtn">继续</button>
+      `);
+      document.getElementById("nextBtn").onclick = pageRule;
+    }
+
+    async function pageRule() {
+      await saveProgress("rule");
+      let rows = "";
+      for (let i = 0; i <= 10; i++) rows += `<tr><td>${i} 点</td><td>${10 - i} 分</td></tr>`;
+      render(`
+        <h1>每轮选择规则</h1>
+        <p>在每一轮中，你和另外两名成员都会分别获得 <b>10 点资源</b>。</p>
+        <p>你需要选择将多少资源点投入公共森林账户。未投入公共森林账户的资源点将保留为你的个人积分。</p>
+        <table>
+          <thead><tr><th>你投入公共森林账户</th><th>你保留的个人积分</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <p>个人积分会根据实验规则随机选择一轮进行结算，并按照一定比例兑换为金钱，作为被试费的一部分支付。</p>
+        <p>公共森林账户中的资源会按照实验规则折算为真实环保捐赠，捐赠至中华环境保护基金会，用于支持环境保护相关公益项目。</p>
+        <p>请根据自己的真实想法做出决定。</p>
+        <button id="nextBtn">我明白了</button>
+      `);
+      document.getElementById("nextBtn").onclick = pageGoal;
+    }
+
+    async function pageGoal() {
+      await saveProgress("goal");
+      render(`
+        <h1>公共森林项目目标</h1>
+        <p>本实验共有 <b>${BLOCKS}</b> 个公共森林项目，每个项目包含 <b>${TRIALS_PER_BLOCK}</b> 轮决策。</p>
+        <p>在每个项目中，你和另外两名成员每轮都可以将 0–10 点资源投入公共森林账户。</p>
+        <div class="highlight">
+          <p>每个项目设置一个公共森林保护参考目标：</p>
+          <p><b>三名成员在 ${TRIALS_PER_BLOCK} 轮中累计投入达到 ${BLOCK_TARGET} 点。</b></p>
+        </div>
+        <p>小组累计投入越高，代表该公共森林项目获得的支持越多。当小组累计投入达到或超过 ${BLOCK_TARGET} 点时，该项目将被判定为达到公共森林保护目标。</p>
+        <p>公共森林账户中的资源会按照实验规则折算为真实环保捐赠，捐赠至中华环境保护基金会。</p>
+        <p>请根据自己的真实想法完成每一轮选择。</p>
+        <button id="nextBtn">继续</button>
+      `);
+      document.getElementById("nextBtn").onclick = pagePaymentRule;
+    }
+
+    async function pagePaymentRule() {
+      await saveProgress("payment_rule");
+      render(`
+        <h1>积分与公共森林结算</h1>
+        <p>实验结束后，系统将在全部决策轮次中随机抽取一轮作为个人积分结算轮。</p>
+        <p>在被抽中的轮次中，你保留的资源点将按照一定比例兑换为金钱，作为被试费的一部分支付。</p>
+        <p>你投入公共森林账户的资源点将计入公共森林环保资源，并按照实验规则折算为真实环保捐赠，捐赠至中华环境保护基金会。</p>
+        <p>也就是说，每一轮选择都有可能影响你的个人积分和最终公共森林环保捐赠。请认真完成每一次决策。</p>
+        <button id="nextBtn">继续</button>
+      `);
+      document.getElementById("nextBtn").onclick = pageComprehension;
+    }
+
+    async function pageComprehension() {
+      await saveProgress("comprehension");
+      render(`
+        <h1>任务理解检查</h1>
+        <p>请回答以下问题。答错后需要重新阅读规则。</p>
+        <div class="radio-row">
+          <p><b>题目 1：每轮每名成员会获得多少资源点？</b></p>
+          <label><input type="radio" name="q1" value="A">A. 5 点</label><br>
+          <label><input type="radio" name="q1" value="B">B. 10 点</label><br>
+          <label><input type="radio" name="q1" value="C">C. 20 点</label>
+        </div>
+        <div class="radio-row">
+          <p><b>题目 2：如果你投入公共森林账户的资源点越多，你本轮保留的个人积分会怎样？</b></p>
+          <label><input type="radio" name="q2" value="A">A. 越多</label><br>
+          <label><input type="radio" name="q2" value="B">B. 越少</label><br>
+          <label><input type="radio" name="q2" value="C">C. 不变</label>
+        </div>
+        <div class="radio-row">
+          <p><b>题目 3：每个公共森林项目包含多少轮决策？</b></p>
+          <label><input type="radio" name="q3" value="A">A. 4 轮</label><br>
+          <label><input type="radio" name="q3" value="B">B. ${TRIALS_PER_BLOCK} 轮</label><br>
+          <label><input type="radio" name="q3" value="C">C. 16 轮</label>
+        </div>
+        <div class="radio-row">
+          <p><b>题目 4：每个公共森林项目的保护参考目标是多少？</b></p>
+          <label><input type="radio" name="q4" value="A">A. 40 点</label><br>
+          <label><input type="radio" name="q4" value="B">B. 80 点</label><br>
+          <label><input type="radio" name="q4" value="C">C. ${BLOCK_TARGET} 点</label>
+        </div>
+        <button id="submitBtn">提交答案</button>
+      `);
+      document.getElementById("submitBtn").onclick = async () => {
+        const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+        const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+        const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+        const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+        const correct = q1 === "B" && q2 === "B" && q3 === "B" && q4 === "C";
+        await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}/comprehension`), {
+          q1, q2, q3, q4, correct, submittedAt: serverTimestamp()
+        });
+        if (!correct) {
+          alert("有题目回答错误，请重新阅读规则。");
+          pageRule();
+          return;
+        }
+        state.currentBlock = 1;
+        pageConditionInfo(1);
+      };
+    }
+
+    function conditionInfoHtml(condition, blockIndex) {
+      const intro = `
+        <p>中华环境保护基金会（China Environmental Protection Foundation, CEPF）成立于 1993 年，是中国较早成立的环保公益组织之一，长期致力于环境保护、生态修复和公众环保教育。</p>
+        <p>公共森林项目是一类面向环境保护的公益项目。参与者可以选择将一部分个人资源投入公共森林账户，用于支持森林保护、生态恢复和环境改善。</p>
+      `;
+      if (condition === "control") {
+        return `
+          <h1>${blockIndex === 1 ? "公共森林项目信息" : "新的公共森林项目即将开始"}</h1>
+          ${intro}
+          <p>在接下来的任务中，你将和另外两名成员共同完成公共森林投入任务。每一轮中，你都会获得 10 点资源。你可以选择将 0–10 点中的任意资源投入公共森林账户，未投入的资源将保留为你的个人积分。</p>
+          <p>请认真阅读以上信息。阅读完成后，请继续完成接下来的公共森林投入任务。</p>
+        `;
+      }
+      if (condition === "static") {
+        return `
+          <h1>前期参与者数据</h1>
+          ${intro}
+          <p>最近一批同类任务数据显示：</p>
+          <div class="highlight">
+            <p><b>约有 30% 的参与者在多数轮次中选择向公共森林账户投入 5 点及以上。</b></p>
+          </div>
+          <p>这意味着，在当前参与者中，每 10 个人中大约有 3 个人会在多数轮次中向公共森林账户投入较多个人资源。</p>
+          <p><b>同时，前期调查显示，这一比例在过去一段时间里基本保持稳定，并没有出现明显变化。</b></p>
+          <p>这一数据反映了最近一批参与者在公共森林投入任务中的选择情况。</p>
+          <p>请认真阅读以上信息。阅读完成后，请继续完成接下来的公共森林投入任务。</p>
+        `;
+      }
+      return `
+        <h1>前期参与者数据</h1>
+        ${intro}
+        <p>前期不同批次的同类任务数据显示：</p>
+        <div class="highlight">
+          <p><b>选择向公共森林账户投入 5 点及以上，正在成为越来越多参与者愿意做出的选择。</b></p>
+        </div>
+        <p>具体来说，选择向公共森林账户投入较多个人资源的参与者比例，已经从较早一批的 <b>5%</b> 上升到最近一批的 <b>30%</b>。</p>
+        <p>这意味着，与过去相比，现在有更多参与者愿意在多数轮次中把较多个人资源投入公共森林账户。该比例增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p>
+        <div class="highlight">
+          <p><b>这一变化表明：</b></p>
+          <p><b>向公共森林账户投入较多资源，正在变得越来越普遍。</b></p>
+          <p><b>越来越多参与者愿意为了公共森林保护而投入更多个人资源。</b></p>
+          <p><b>如果这种变化继续发展，未来可能会有更多参与者选择向公共森林账户投入较多资源。</b></p>
+        </div>
+        <p>请认真阅读以上信息。阅读完成后，请继续完成接下来的公共森林投入任务。</p>
+      `;
+    }
+
+    async function pageConditionInfo(blockIndex) {
+      await saveProgress("condition_info", { blockIndex });
+      render(`
+        ${conditionInfoHtml(state.condition, blockIndex)}
+        <button id="nextBtn">我已阅读，继续</button>
+      `);
+      document.getElementById("nextBtn").onclick = () => pageConditionCheck(blockIndex);
+    }
+
+    async function pageConditionCheck(blockIndex) {
+      await saveProgress("condition_check", { blockIndex });
+      let options = "";
+      let correct = "";
+      if (state.condition === "control") {
+        options = `
+          <label><input type="radio" name="cq" value="A">A. 公共森林账户代表一项环境保护资源，参与者可以投入个人资源支持公共森林保护</label><br>
+          <label><input type="radio" name="cq" value="B">B. 越来越多参与者正在投入公共森林账户</label><br>
+          <label><input type="radio" name="cq" value="C">C. 最近一批参与者中有 30% 的人投入公共森林账户</label>`;
+        correct = "A";
+      } else if (state.condition === "static") {
+        options = `
+          <label><input type="radio" name="cq" value="A">A. 最近一批参与者中，约有 30% 的人多数轮次向公共森林账户投入 5 点及以上，并且这一比例基本保持稳定</label><br>
+          <label><input type="radio" name="cq" value="B">B. 选择投入公共森林账户的人正在明显增加</label><br>
+          <label><input type="radio" name="cq" value="C">C. 未来一定会有更多人投入公共森林账户</label>`;
+        correct = "A";
+      } else {
+        options = `
+          <label><input type="radio" name="cq" value="A">A. 最近一批参与者中，有固定比例的人投入公共森林账户</label><br>
+          <label><input type="radio" name="cq" value="B">B. 越来越多参与者正在选择向公共森林账户投入较多资源，这一比例从 5% 上升到 30%</label><br>
+          <label><input type="radio" name="cq" value="C">C. 所有参与者都会向公共森林账户投入较多资源</label>`;
+        correct = "B";
+      }
+      render(`
+        <h1>信息理解检查</h1>
+        <p>刚才的信息主要表达了什么？</p>
+        <div class="radio-row">${options}</div>
+        <button id="submitBtn">提交答案</button>
+      `);
+      document.getElementById("submitBtn").onclick = async () => {
+        const ans = document.querySelector('input[name="cq"]:checked')?.value;
+        const isCorrect = ans === correct;
+        await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}/condition_checks/block_${blockIndex}`), {
+          answer: ans || null,
+          correct: isCorrect,
+          condition: state.condition,
+          submittedAt: serverTimestamp()
+        });
+        if (!isCorrect) {
+          alert("信息理解题回答错误，请重新阅读。");
+          pageConditionInfo(blockIndex);
+          return;
+        }
+        pageProjectStart(blockIndex);
+      };
+    }
+
+    async function pageProjectStart(blockIndex) {
+      state.currentBlock = blockIndex;
+      state.currentTrial = 1;
+      const project = PROJECTS[blockIndex - 1];
+      await saveProgress("project_start", { blockIndex });
+      render(`
+        <h1>公共森林项目 ${blockIndex}：${project.name}</h1>
+        <p>接下来你将和另外两名成员共同完成第 ${blockIndex} 个公共森林项目。</p>
+        <p>${project.desc}</p>
+        <p>本项目共有 <b>${TRIALS_PER_BLOCK}</b> 轮决策。每轮中，你和另外两名成员都会获得 10 点资源，并分别决定投入多少资源到公共森林账户。</p>
+        <div class="highlight">
+          <p>本项目保护参考目标：</p>
+          <p><b>三名成员 ${TRIALS_PER_BLOCK} 轮累计投入达到 ${BLOCK_TARGET} 点。</b></p>
+        </div>
+        <button id="startBtn">开始本项目</button>
+      `);
+      document.getElementById("startBtn").onclick = () => markReadyForTrial(blockIndex, 1);
+    }
+
+    async function markReadyForTrial(blockIndex, trialIndex) {
+      await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/ready/block_${blockIndex}/trial_${trialIndex}/${state.participantId}`), {
+        ready: true,
+        time: serverTimestamp()
+      });
+      pageTrialReadyWait(blockIndex, trialIndex);
+    }
+
+    function pageTrialReadyWait(blockIndex, trialIndex) {
+      render(`
+        <h1>准备进入本轮决策</h1>
+        <p>系统正在同步三名成员的任务进度。</p>
+        <p>请稍等，所有成员准备完成后，本轮决策将同时开始。</p>
+        <div class="warning" id="readyStatus">等待其他成员准备……</div>
+      `);
+      let moved = false;
+      const readyRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/ready/block_${blockIndex}/trial_${trialIndex}`);
+      const unsubscribe = onValue(readyRef, (snap) => {
+        const readyData = snap.val() || {};
+        const count = Object.keys(readyData).length;
+        const el = document.getElementById("readyStatus");
+        if (el) el.textContent = `当前已准备：${count}/${GROUP_SIZE}`;
+        if (!moved && count >= GROUP_SIZE) {
+          moved = true;
+          unsubscribe();
+          pageDecision(blockIndex, trialIndex);
+        }
+      });
+    }
+
+    async function pageDecision(blockIndex, trialIndex) {
+      state.selectedDonation = null;
+      state.trialStartTime = Date.now();
+      await saveProgress("decision", { blockIndex, trialIndex });
+      render(`
+        <h1>项目 ${blockIndex} / ${BLOCKS}，第 ${trialIndex} / ${TRIALS_PER_BLOCK} 轮</h1>
+        <p>本轮你获得 <b>10 点资源</b>。</p>
+        <p>请在 0–10 点之间选择你愿意投入公共森林账户的资源点数。未投入公共森林账户的资源点将保留为你的个人积分。</p>
+        <p><b>请选择你本轮投入公共森林账户的资源点数：</b></p>
+        <div class="choice-grid" id="choiceGrid">
+          ${Array.from({ length: 11 }, (_, i) => `<div class="choice-btn" data-value="${i}">${i}</div>`).join("")}
+        </div>
+        <div class="highlight" id="choiceDisplay">你尚未选择。</div>
+        <button id="confirmBtn">确认选择</button>
+      `);
+      document.querySelectorAll(".choice-btn").forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.selectedDonation = Number(btn.dataset.value);
+          document.getElementById("choiceDisplay").innerHTML =
+            `你本轮选择投入：<b>${state.selectedDonation}</b> 点<br>你本轮保留个人积分：<b>${10 - state.selectedDonation}</b> 分`;
+        };
+      });
+      document.getElementById("confirmBtn").onclick = async () => {
+        if (state.selectedDonation === null) {
+          alert("请选择 0–10 点中的一个数值。");
+          return;
+        }
+        const donation = state.selectedDonation;
+        const personal = 10 - donation;
+        const rt = Date.now() - state.trialStartTime;
+        await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}/choices/${state.participantId}`), {
+          participantId: state.participantId,
+          roleId: state.roleId,
+          slot: state.slot,
+          donation,
+          personal_points: personal,
+          response_time_ms: rt,
+          blockIndex,
+          trialIndex,
+          condition: state.condition,
+          submittedAt: serverTimestamp()
+        });
+        pageWaitForChoices(blockIndex, trialIndex);
+      };
+    }
+
+    function pageWaitForChoices(blockIndex, trialIndex) {
+      render(`
+        <h1>等待其他成员完成选择</h1>
+        <p>你已完成本轮选择。</p>
+        <p>请稍等，系统正在等待另外两名成员提交本轮选择。</p>
+        <div class="warning" id="choiceStatus">等待其他成员提交……</div>
+      `);
+      let moved = false;
+      const choicesRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}/choices`);
+      const unsubscribe = onValue(choicesRef, (snap) => {
+        const choices = snap.val() || {};
+        const count = Object.keys(choices).length;
+        const el = document.getElementById("choiceStatus");
+        if (el) el.textContent = `当前已提交：${count}/${GROUP_SIZE}`;
+        if (!moved && count >= GROUP_SIZE) {
+          moved = true;
+          unsubscribe();
+          pageTrialFeedback(blockIndex, trialIndex);
+        }
+      });
+    }
+
+    async function calculateBlockCumulative(blockIndex, throughTrial) {
+      const groupData = await getGroupData();
+      let sum = 0;
+      for (let t = 1; t <= throughTrial; t++) {
+        const choices = groupData?.blocks?.[`block_${blockIndex}`]?.trials?.[`trial_${t}`]?.choices || {};
+        Object.values(choices).forEach(ch => sum += Number(ch.donation || 0));
+      }
+      return sum;
+    }
+
+    async function pageTrialFeedback(blockIndex, trialIndex) {
+      const groupData = await getGroupData();
+      const choices = groupData?.blocks?.[`block_${blockIndex}`]?.trials?.[`trial_${trialIndex}`]?.choices || {};
+      const myChoice = choices[state.participantId];
+      const cumulative = await calculateBlockCumulative(blockIndex, trialIndex);
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}`), {
+        cumulative_after: cumulative,
+        updatedAt: serverTimestamp()
+      });
+      render(`
+        <h1>本轮结果</h1>
+        <div class="highlight">
+          <p>你本轮投入公共森林账户：</p>
+          <p><b>${myChoice?.donation ?? ""} 点</b></p>
+          <p>你本轮保留个人积分：</p>
+          <p><b>${myChoice?.personal_points ?? ""} 分</b></p>
+        </div>
+        <div class="progress-box">
+          <p>当前项目公共森林累计投入：</p>
+          <p><b>${cumulative} / ${BLOCK_TARGET} 点</b></p>
+          <div class="bar-wrap"><div class="bar" style="width:${percent(cumulative, BLOCK_TARGET)}%"></div></div>
+        </div>
+        <button id="nextBtn">${trialIndex < TRIALS_PER_BLOCK ? "进入下一轮" : "查看项目结果"}</button>
+      `);
+      document.getElementById("nextBtn").onclick = () => {
+        if (trialIndex < TRIALS_PER_BLOCK) {
+          markReadyForTrial(blockIndex, trialIndex + 1);
+        } else {
+          pageBlockEnd(blockIndex);
         }
       };
     }
 
-    if (!cur || !cur.openGroup || cur.openGroup.status === "full") {
-      return makeNewGroup(cur?.counter || 0);
-    }
-
-    const g = cur.openGroup;
-    g.slots = g.slots || {};
-
-    // 如果同一个 participant 因刷新/重试再次进入，不重复占位
-    const alreadySlot = Object.entries(g.slots).find(([slot, pid]) => pid === state.participantId);
-    if (!alreadySlot) {
-      for (let i = 1; i <= GROUP_SIZE; i++) {
-        const key = String(i);
-        if (!g.slots[key]) {
-          g.slots[key] = state.participantId;
-          break;
+    async function pageBlockEnd(blockIndex) {
+      const groupData = await getGroupData();
+      let groupTotal = 0;
+      let myDonationTotal = 0;
+      let myPersonalTotal = 0;
+      for (let t = 1; t <= TRIALS_PER_BLOCK; t++) {
+        const choices = groupData?.blocks?.[`block_${blockIndex}`]?.trials?.[`trial_${t}`]?.choices || {};
+        Object.values(choices).forEach(ch => groupTotal += Number(ch.donation || 0));
+        const my = choices[state.participantId];
+        if (my) {
+          myDonationTotal += Number(my.donation || 0);
+          myPersonalTotal += Number(my.personal_points || 0);
         }
       }
-    }
-
-    const filled = Object.values(g.slots).filter(Boolean).length;
-    g.status = filled >= GROUP_SIZE ? "full" : "waiting";
-    g.updatedAt = now;
-    cur.openGroup = g;
-    cur.counter = cur.counter || g.groupNumber || 1;
-    return cur;
-  });
-
-  const match = tx.snapshot.val();
-  const g = match.openGroup;
-  const slots = g.slots || {};
-  const mySlot = Object.keys(slots).find(slot => slots[slot] === state.participantId) || "1";
-
-  state.groupId = g.groupId;
-  state.groupNumber = g.groupNumber;
-  state.condition = g.condition;
-  state.roleId = `成员${mySlot}`;
-
-  const roster = {};
-  Object.entries(slots).forEach(([slot, pid]) => {
-    if (pid) roster[`member_${slot}`] = pid;
-  });
-  const memberCount = Object.keys(roster).length;
-
-  await dbUpdate(`groups/${state.groupId}/metadata`, {
-    groupId: state.groupId,
-    groupNumber: state.groupNumber,
-    condition: state.condition,
-    status: memberCount >= GROUP_SIZE ? "full" : "waiting",
-    memberCount,
-    roster,
-    updatedAt: serverTimestamp()
-  });
-
-  await dbSet(`groups/${state.groupId}/members/${state.participantId}`, {
-    participantId: state.participantId,
-    roleId: state.roleId,
-    slot: Number(mySlot),
-    info: state.info,
-    joinedAt: serverTimestamp(),
-    last_page: "matched"
-  });
-
-  await dbSet(`participants/${state.participantId}`, {
-    participantId: state.participantId,
-    groupId: state.groupId,
-    groupNumber: state.groupNumber,
-    roleId: state.roleId,
-    slot: Number(mySlot),
-    condition: state.condition,
-    info: state.info,
-    joinedAt: serverTimestamp()
-  });
-
-  // 关键修复：监听 metadata.roster，而不是只监听 members。
-  // 第3名成员进入后会写入完整 roster，前两名成员会稳定收到 3/3 信号。
-  listen(`groups/${state.groupId}/metadata`, async (snap) => {
-    const meta = snap.val() || {};
-    const count = meta.memberCount || Object.keys(meta.roster || {}).length || 0;
-    const el = document.getElementById("matchStatus");
-    if (el) el.textContent = `当前状态：已加入小组，等待成员到齐（${count}/${GROUP_SIZE}）`;
-
-    if (count >= GROUP_SIZE && !state.enteredGroupIntro) {
-      state.enteredGroupIntro = true;
-      await dbUpdate(`groups/${state.groupId}/metadata`, {
-        status: "full",
-        formedAt: serverTimestamp()
+      const success = groupTotal >= BLOCK_TARGET;
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}`), {
+        groupTotal,
+        target: BLOCK_TARGET,
+        success,
+        completedAt: serverTimestamp()
       });
-      pageGroupIntro();
+      render(`
+        <h1>项目 ${blockIndex} 完成</h1>
+        <p>你已经完成第 ${blockIndex} 个公共森林项目的 ${TRIALS_PER_BLOCK} 轮决策。</p>
+        <div class="progress-box">
+          <p>本项目公共森林累计投入：</p>
+          <p><b>${groupTotal} / ${BLOCK_TARGET} 点</b></p>
+          <div class="bar-wrap"><div class="bar" style="width:${percent(groupTotal, BLOCK_TARGET)}%"></div></div>
+        </div>
+        <div class="highlight">
+          <p>结果：</p>
+          <p><b>${success ? "本项目达到公共森林保护目标。" : "本项目未达到公共森林保护目标。"}</b></p>
+        </div>
+        <p>你在本项目中累计投入公共森林账户：<b>${myDonationTotal} 点</b></p>
+        <p>你在本项目中累计保留个人积分：<b>${myPersonalTotal} 分</b></p>
+        <button id="nextBtn">${blockIndex < BLOCKS ? "进入下一个公共森林项目" : "进入问卷"}</button>
+      `);
+      document.getElementById("nextBtn").onclick = () => {
+        if (blockIndex < BLOCKS) {
+          pageConditionInfo(blockIndex + 1);
+        } else {
+          pageQuestionnaire(0, {});
+        }
+      };
     }
-  });
-}
 
-async function pageGroupIntro() {
-  await saveProgress("group_intro");
-  render(`
-    <h1>你的小组</h1>
-    <p>你已经成功加入一个 3 人小组。</p>
-    <div class="greenbox"><p>你：${esc(state.roleId)}</p><p>另外两名参与者：其他匿名成员</p></div>
-    <p>在任务过程中，你们三人将分别做出决策。公共森林账户中的累计投入将反映小组对公共森林项目的支持程度。</p>
-    <p>请注意，任务过程中不能与其他成员交流。</p>
-    <button id="go">继续</button>
-  `);
-  document.getElementById("go").onclick = pageTaskBackground;
-}
-
-async function pageTaskBackground() {
-  await saveProgress("task_background");
-  render(`<h1>公共森林投入任务</h1><p>在接下来的任务中，你将和另外两名成员共同参与公共森林投入任务。</p><p>公共森林账户代表一项环境保护资源。每位成员都可以选择将一部分个人资源投入公共森林账户，用于支持森林保护和生态恢复。</p><p>投入公共森林账户的资源越多，代表对公共森林项目的支持越多；保留的资源越多，你获得的个人积分越多。</p><p>实验结束后，系统会按照规则随机抽取一轮，将该轮中你保留的个人积分兑换为金钱，作为被试费的一部分支付；公共森林账户中的资源将按照实验规则折算为真实环保捐赠，捐赠至中华环境保护基金会。</p><button id="go">继续</button>`);
-  document.getElementById("go").onclick = pageRules;
-}
-
-async function pageRules() {
-  await saveProgress("rules");
-  let rows = "";
-  for (let i=0; i<=10; i++) rows += `<tr><td>${i} 点</td><td>${10-i} 分</td></tr>`;
-  render(`<h1>每轮选择规则</h1><p>在每一轮中，你和另外两名成员都会分别获得 <b>10 点资源</b>。</p><p>你需要选择将多少资源点投入公共森林账户。未投入公共森林账户的资源点将保留为你的个人积分。</p><table><thead><tr><th>你投入公共森林账户</th><th>你保留的个人积分</th></tr></thead><tbody>${rows}</tbody></table><p>实验结束后，系统会随机抽取一轮，将该轮中你保留的个人积分按照规则兑换为金钱，作为被试费的一部分支付；你投入公共森林账户的资源将按照实验规则折算为真实环保捐赠，捐赠至中华环境保护基金会。</p><p>请根据自己的真实想法做出决定。</p><button id="go">我明白了</button>`);
-  document.getElementById("go").onclick = pageGoal;
-}
-
-async function pageGoal() {
-  await saveProgress("goal");
-  render(`<h1>公共森林项目目标</h1><p>本实验共有 <b>${BLOCKS} 个公共森林项目</b>，每个项目包含 <b>${TRIALS_PER_BLOCK} 轮决策</b>。</p><p>在每个项目中，你和另外两名成员每轮都可以将 0–10 点资源投入公共森林账户。</p><div class="greenbox"><p>每个项目设置一个公共森林保护参考目标：</p><p><b>三名成员在 ${TRIALS_PER_BLOCK} 轮中累计投入达到 ${PROJECT_TARGET} 点。</b></p></div><p>小组累计投入越高，代表该公共森林项目获得的支持越多。当小组累计投入达到或超过 ${PROJECT_TARGET} 点时，该项目将被判定为达到公共森林保护目标。</p><p>请根据自己的真实想法完成每一轮选择。</p><button id="go">继续</button>`);
-  document.getElementById("go").onclick = pageSettlement;
-}
-
-async function pageSettlement() {
-  await saveProgress("settlement");
-  render(`<h1>积分与公共森林结算</h1><p>实验结束后，系统会在全部决策轮次中随机抽取一轮作为个人积分结算轮。</p><ul><li>在被抽中的轮次中，你保留的个人积分将按照实验规则兑换为金钱，作为被试费的一部分支付；</li><li>你和小组成员投入公共森林账户的资源将按照实验规则折算为真实环保捐赠，捐赠至中华环境保护基金会。</li></ul><p>同时，系统会根据被抽中项目的公共森林累计投入情况确定公共森林保护结果。</p><p>也就是说，每一轮选择都有可能影响个人报酬和公共森林环保捐赠。请认真完成每一次决策。</p><button id="go">继续</button>`);
-  document.getElementById("go").onclick = pageComprehension;
-}
-
-async function pageComprehension() {
-  await saveProgress("comprehension");
-  render(`
-    <h1>任务理解检查</h1><p>请回答以下问题。答错后需要重新阅读规则。</p>
-    ${radioBlock("q1", "题目 1：每轮每名成员会获得多少资源点？", [["A","5 点"],["B","10 点"],["C","20 点"]])}
-    ${radioBlock("q2", "题目 2：如果你投入公共森林账户的资源点越多，你本轮保留的个人积分会怎样？", [["A","越多"],["B","越少"],["C","不变"]])}
-    ${radioBlock("q3", `题目 3：每个公共森林项目包含多少轮决策？`, [["A","2 轮"],["B",`${TRIALS_PER_BLOCK} 轮`],["C","16 轮"]])}
-    ${radioBlock("q4", "题目 4：每个公共森林项目的保护参考目标是多少？", [["A","40 点"],["B",`${PROJECT_TARGET} 点`],["C","240 点"]])}
-    <button id="go">提交答案</button>`);
-  document.getElementById("go").onclick = async () => {
-    const a = getRadioValues(["q1","q2","q3","q4"]);
-    if (!a) return alert("请完成所有题目。");
-    const correct = a.q1==="B" && a.q2==="B" && a.q3==="B" && a.q4==="B";
-    await dbSet(`groups/${state.groupId}/members/${state.participantId}/comprehension`, { ...a, correct, submittedAt: await dbServerTimestamp() });
-    if (!correct) { alert("有题目回答错误，请重新阅读规则。"); return pageRules(); }
-    pageConditionInfo(1);
-  };
-}
-
-function radioBlock(name, title, opts) {
-  return `<div class="radio-block"><p><b>${title}</b></p>${opts.map(o=>`<label><input type="radio" name="${name}" value="${o[0]}">${o[0]}. ${o[1]}</label><br>`).join("")}</div>`;
-}
-function getRadioValues(names) {
-  const out = {};
-  for (const n of names) {
-    const v = document.querySelector(`input[name="${n}"]:checked`)?.value;
-    if (!v) return null;
-    out[n] = v;
-  }
-  return out;
-}
-
-/*********************** 条件呈现 + 阅读理解：每个block前都呈现 ***********************/
-async function pageConditionInfo(block) {
-  state.blockIndex = block;
-  state.trialIndex = 1;
-  await saveProgress("condition_info", { blockIndex:block, condition:state.condition });
-  const prefix = block === 1 ? "任务开始前说明" : "新的公共森林项目即将开始";
-  if (state.condition === "control") {
-    render(`<h1>${prefix}</h1><p>在接下来的任务中，你将和另外两名成员共同完成公共森林投入任务。</p><p>公共森林账户代表一项环境保护资源。每位成员可以选择将一部分个人资源投入公共森林账户，用于支持森林保护和生态恢复。</p><p>每一轮中，你都会获得 10 点资源。你可以选择将 0–10 点中的任意资源投入公共森林账户，未投入的资源将保留为你的个人积分。</p><p>请根据自己的真实想法完成接下来的公共森林投入任务。</p><button id="go">我已阅读，继续</button>`);
-  } else if (state.condition === "static") {
-    render(`<h1>${prefix}</h1><p>在正式任务开始前，你将看到一条来自前期参与者的数据概况。</p><p>公共森林账户代表一项环境保护资源。参与者可以选择将一部分个人资源投入公共森林账户，用于支持森林保护和生态恢复。</p><div class="greenbox"><p><b>根据最近一批同类任务数据：</b></p><p><b>约 30% 的参与者在多数轮次中选择向公共森林账户投入 5 点及以上。</b></p></div><p>这一数据反映了最近一批参与者在公共森林投入任务中的选择情况。</p><p>请认真阅读以上信息。阅读完成后，请继续完成接下来的公共森林投入任务。</p><button id="go">我已阅读，继续</button>`);
-  } else {
-    render(`<h1>${prefix}</h1><p>在正式任务开始前，你将看到一条来自前期参与者的数据概况。</p><p>公共森林账户代表一项环境保护资源。参与者可以选择将一部分个人资源投入公共森林账户，用于支持森林保护和生态恢复。</p><div class="greenbox"><p><b>根据前期不同批次的同类任务数据：</b></p><p><b>选择向公共森林账户投入 5 点及以上的参与者比例，从较早一批的 5% 上升到最近一批的 30%。</b></p></div><p>也就是说，选择向公共森林账户投入较多资源的参与者比例增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p><div class="greenbox"><p><b>这一变化表明：</b></p><p><b>公共森林保护正在吸引越来越多参与者加入。</b></p><p><b>和过去相比，现在有更多人愿意为了环境保护而投入较多个人资源。</b></p><p><b>如果这种变化继续发展，未来可能会有更多参与者愿意投入公共森林账户。</b></p></div><p>请认真阅读以上信息。阅读完成后，请继续完成接下来的公共森林投入任务。</p><button id="go">我已阅读，继续</button>`);
-  }
-  document.getElementById("go").onclick = () => pageConditionCheck(block);
-}
-
-async function pageConditionCheck(block) {
-  await saveProgress("condition_check", { blockIndex:block });
-  let html;
-  if (state.condition === "control") {
-    html = `<h1>信息理解检查</h1><p>刚才的信息主要提醒你什么？</p>${radioBlock("cq", "请选择最符合的一项：", [["A","根据自己的真实想法完成公共森林投入任务"],["B","已有30%的参与者投入5点及以上"],["C","投入5点及以上的人正在增加"]])}<button id="go">提交答案</button>`;
-  } else if (state.condition === "static") {
-    html = `<h1>信息理解检查</h1><p>刚才的信息主要表达了什么？</p>${radioBlock("cq", "请选择最符合的一项：", [["A","最近一批参与者中，约有30%的人多数轮次投入5点及以上"],["B","选择投入公共森林账户的人正在增加"],["C","未来一定会有更多人投入公共森林账户"]])}<button id="go">提交答案</button>`;
-  } else {
-    html = `<h1>信息理解检查</h1><p>刚才的信息主要表达了什么？</p>${radioBlock("cq", "请选择最符合的一项：", [["A","最近一批参与者中，有固定比例的人投入公共森林账户"],["B","投入5点及以上的参与者比例从较早批次到最近批次有所增加，并呈现出未来可能继续扩大的趋势"],["C","所有参与者都会投入公共森林账户"]])}<button id="go">提交答案</button>`;
-  }
-  render(html);
-  document.getElementById("go").onclick = async () => {
-    const ans = document.querySelector('input[name="cq"]:checked')?.value;
-    if (!ans) return alert("请选择答案。");
-    const correct = (state.condition === "control" && ans === "A") || (state.condition === "static" && ans === "A") || (state.condition === "dynamic" && ans === "B");
-    await dbSet(`groups/${state.groupId}/members/${state.participantId}/condition_checks/block_${block}`, { answer:ans, correct, blockIndex:block, submittedAt: await dbServerTimestamp() });
-    if (!correct) { alert("阅读理解题回答错误，请重新阅读信息。"); return pageConditionInfo(block); }
-    pageProjectStart(block);
-  };
-}
-
-async function pageProjectStart(block) {
-  await saveProgress("project_start", { blockIndex:block });
-  const p = PROJECTS[block-1] || PROJECTS[0];
-  render(`<h1>公共森林项目 ${block}：${p.name}</h1><p>接下来你将和另外两名成员共同完成第 ${block} 个公共森林项目。</p><p>${p.desc}</p><p>本项目共有 <b>${TRIALS_PER_BLOCK} 轮决策</b>。每轮中，你和另外两名成员都会获得 10 点资源，并分别决定投入多少资源到公共森林账户。</p><div class="greenbox"><p>本项目保护参考目标：</p><p><b>三名成员 ${TRIALS_PER_BLOCK} 轮累计投入达到 ${PROJECT_TARGET} 点。</b></p></div><button id="go">开始本项目</button>`);
-  document.getElementById("go").onclick = () => markReady(block, 1);
-}
-
-async function markReady(block, trial) {
-  state.blockIndex = block; state.trialIndex = trial;
-  await dbSet(`groups/${state.groupId}/ready/block_${block}/trial_${trial}/${state.participantId}`, { ready:true, time: await dbServerTimestamp() });
-  pageWaitReady(block, trial);
-}
-
-function pageWaitReady(block, trial) {
-  render(`<h1>准备进入本轮决策</h1><p>系统正在同步三名成员的任务进度。</p><p>请稍等，所有成员准备完成后，本轮决策将同时开始。</p><div class="warn" id="readyBox">等待其他成员准备……</div>`);
-  listen(`groups/${state.groupId}/ready/block_${block}/trial_${trial}`, (snap) => {
-    const n = Object.keys(snap.val() || {}).length;
-    const el = document.getElementById("readyBox");
-    if (el) el.textContent = `当前已准备：${n}/${GROUP_SIZE}`;
-    if (n >= GROUP_SIZE && document.getElementById("readyBox")) pageDecision(block, trial);
-  });
-}
-
-async function getCumulative(block, upToTrialInclusive=0) {
-  const group = await dbGet(`groups/${state.groupId}`) || {};
-  let sum = 0;
-  const trials = group.blocks?.[`block_${block}`]?.trials || {};
-  for (let t=1; t<=upToTrialInclusive; t++) {
-    const choices = trials[`trial_${t}`]?.choices || {};
-    Object.values(choices).forEach(ch => sum += Number(ch.donation || 0));
-  }
-  return sum;
-}
-
-async function pageDecision(block, trial) {
-  await saveProgress("decision", { blockIndex:block, trialIndex:trial });
-  state.selectedDonation = null;
-  state.trialStartTime = Date.now();
-  // 按用户要求：决策页面不显示每轮进度
-  render(`<h1>项目 ${block} / ${BLOCKS}，第 ${trial} / ${TRIALS_PER_BLOCK} 轮</h1><p>本轮你获得 <b>10 点资源</b>。</p><p>请在 0–10 点之间选择你愿意投入公共森林账户的资源点数。未投入公共森林账户的资源点将保留为你的个人积分。</p><p><b>请选择你本轮投入公共森林账户的资源点数：</b></p><div class="choice-grid">${Array.from({length:11}, (_,i)=>`<div class="choice" data-v="${i}">${i}</div>`).join("")}</div><div class="greenbox" id="choiceText">你尚未选择。</div><button id="confirm">确认选择</button>`);
-  document.querySelectorAll(".choice").forEach(el => el.onclick = () => {
-    document.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));
-    el.classList.add("selected"); state.selectedDonation = Number(el.dataset.v);
-    document.getElementById("choiceText").innerHTML = `你本轮选择投入：<b>${state.selectedDonation}</b> 点<br>你本轮保留个人积分：<b>${10-state.selectedDonation}</b> 分`;
-  });
-  document.getElementById("confirm").onclick = async () => {
-    if (state.selectedDonation === null) return alert("请选择0–10点中的一个数值。");
-    const donation = state.selectedDonation;
-    await dbSet(`groups/${state.groupId}/blocks/block_${block}/trials/trial_${trial}/choices/${state.participantId}`, { participantId:state.participantId, roleId:state.roleId, condition:state.condition, blockIndex:block, trialIndex:trial, absoluteTrial:absoluteTrial(block,trial), donation, personal_points:10-donation, response_time_ms:Date.now()-state.trialStartTime, submittedAt: await dbServerTimestamp() });
-    pageWaitChoices(block, trial);
-  };
-}
-
-function pageWaitChoices(block, trial) {
-  render(`<h1>等待其他成员完成选择</h1><p>你已完成本轮选择。</p><p>请稍等，系统正在等待另外两名成员提交本轮选择。</p><div class="warn" id="choiceBox">等待其他成员提交……</div>`);
-  listen(`groups/${state.groupId}/blocks/block_${block}/trials/trial_${trial}/choices`, (snap) => {
-    const n = Object.keys(snap.val() || {}).length;
-    const el = document.getElementById("choiceBox");
-    if (el) el.textContent = `当前已提交：${n}/${GROUP_SIZE}`;
-    if (n >= GROUP_SIZE && document.getElementById("choiceBox")) pageFeedback(block, trial);
-  });
-}
-
-async function pageFeedback(block, trial) {
-  const group = await dbGet(`groups/${state.groupId}`) || {};
-  const my = group.blocks?.[`block_${block}`]?.trials?.[`trial_${trial}`]?.choices?.[state.participantId] || {};
-  const cumulative = await getCumulative(block, trial);
-  await dbSet(`groups/${state.groupId}/blocks/block_${block}/trials/trial_${trial}/cumulative`, { cumulative, target:PROJECT_TARGET, updatedAt: await dbServerTimestamp() });
-  render(`<h1>本轮结果</h1><div class="greenbox"><p>你本轮投入公共森林账户：</p><p><b>${my.donation} 点</b></p><p>你本轮保留个人积分：</p><p><b>${my.personal_points} 分</b></p></div><div class="box"><p>当前项目公共森林累计投入：</p><p><b>${cumulative} / ${PROJECT_TARGET} 点</b></p><div class="bar-wrap"><div class="bar" style="width:${pct(cumulative,PROJECT_TARGET)}%"></div></div></div><button id="go">${trial < TRIALS_PER_BLOCK ? "进入下一轮" : "查看项目结果"}</button>`);
-  document.getElementById("go").onclick = () => {
-    if (trial < TRIALS_PER_BLOCK) markReady(block, trial+1);
-    else pageBlockEnd(block);
-  };
-}
-
-async function pageBlockEnd(block) {
-  const cumulative = await getCumulative(block, TRIALS_PER_BLOCK);
-  const group = await dbGet(`groups/${state.groupId}`) || {};
-  let myDonation = 0, myPersonal = 0;
-  for (let t=1; t<=TRIALS_PER_BLOCK; t++) {
-    const my = group.blocks?.[`block_${block}`]?.trials?.[`trial_${t}`]?.choices?.[state.participantId];
-    if (my) { myDonation += Number(my.donation||0); myPersonal += Number(my.personal_points||0); }
-  }
-  const success = cumulative >= PROJECT_TARGET;
-  await dbSet(`groups/${state.groupId}/blocks/block_${block}/result`, { cumulative, target:PROJECT_TARGET, success, updatedAt: await dbServerTimestamp() });
-  render(`<h1>项目 ${block} 完成</h1><p>你已经完成第 ${block} 个公共森林项目的 ${TRIALS_PER_BLOCK} 轮决策。</p><div class="box"><p>本项目公共森林累计投入：</p><p><b>${cumulative} / ${PROJECT_TARGET} 点</b></p><div class="bar-wrap"><div class="bar" style="width:${pct(cumulative,PROJECT_TARGET)}%"></div></div></div><div class="greenbox"><p>结果：</p><p><b>${success ? "本项目达到公共森林保护目标。" : "本项目未达到公共森林保护目标。"}</b></p></div><p>你在本项目中累计投入公共森林账户：<b>${myDonation} 点</b></p><p>你在本项目中累计保留个人积分：<b>${myPersonal} 分</b></p><button id="go">${block < BLOCKS ? "进入下一项目" : "进入问卷"}</button>`);
-  document.getElementById("go").onclick = () => {
-    if (block < BLOCKS) pageConditionInfo(block+1);
-    else pageQuestionnaire(0);
-  };
-}
-
-/*********************** 问卷：统一指导语，不显示分量表标题，不重复 ***********************/
-const questionnaireGroups = [
-  { title:"未来环境预期", intro:"请根据你的真实想法作答。数字越大表示你越认可右侧描述。", items:[
-    { key:"future_expectation_1", text:"在未来，你认为人们会在多大程度上努力去保护环境？", left:"完全不会", right:"非常会" }
-  ]},
-  { title:"集体效能感", intro:"以下题目采用1–7点评分：1=非常不同意，7=非常同意。", items:[
-    { key:"collective_self_efficacy_1", text:"我们可以共同解决环境问题。" },
-    { key:"collective_self_efficacy_2", text:"我们有足够的力量解决环境问题。" },
-    { key:"collective_self_efficacy_3", text:"我们可以解决破坏环境带来的问题。" }
-  ]},
-  { title:"反应效能", intro:"以下题目采用1–7点评分：1=非常不同意，7=非常同意。", items:[
-    { key:"response_efficacy_1", text:"我认为我的行动会对气候变化产生影响。" },
-    { key:"response_efficacy_2", text:"我认为我的行动会对我如何感受和思考气候变化及一般环境问题产生积极影响。" },
-    { key:"response_efficacy_3", text:"我在社区中减少气候变化影响的行动会鼓励他人也采取行动减少全球变暖的影响。" }
-  ]},
-  { title:"绿色自我身份", intro:"以下题目采用1–7点评分：1=非常不同意，7=非常同意。", items:[
-    { key:"green_self_identity_1", text:"我认为自己是一个非常关心环境问题的人。" },
-    { key:"green_self_identity_2", text:"环保是我身份中重要的一部分。" },
-    { key:"green_self_identity_3", text:"我认同环保组织所倡导的目标。" },
-    { key:"green_self_identity_4", text:"我认为自己是一个环保消费者。" },
-    { key:"green_self_identity_5", text:"我是那种会采取环保行为的人。" }
-  ]},
-  { title:"个人规范", intro:"以下题目采用1–7点评分：1=非常不同意，7=非常同意。", items:[
-    { key:"personal_norm_1", text:"我觉得自己有责任采取环保行为。" },
-    { key:"personal_norm_2", text:"如果我不采取环保行为，我会感到内疚。" },
-    { key:"personal_norm_3", text:"保护环境是我应该做的事情。" }
-  ]},
-  { title:"动态规范操纵检验", intro:"请根据你在任务中看到的信息和真实感受作答。1=非常不同意，7=非常同意。", items:[
-    { key:"dynamic_norm_manipulation_1", text:"我认为公共森林捐赠正在变得越来越普遍。" },
-    { key:"dynamic_norm_manipulation_2", text:"我认为未来会有更多人参与公共森林捐赠。" }
-  ]},
-  { title:"静态规范操纵检验", intro:"请根据你在任务中看到的信息和真实感受作答。1=非常不同意，7=非常同意。", items:[
-    { key:"static_norm_manipulation_1", text:"我认为目前已有不少人参与公共森林捐赠。" },
-    { key:"static_norm_manipulation_2", text:"我认为公共森林捐赠在当前参与者中较为常见。" }
-  ]},
-  { title:"个人影响感知", intro:"以下题目采用1–7点评分：1=非常不同意，7=非常同意。", items:[
-    { key:"personal_influence_1", text:"我觉得自己的捐赠会影响公共森林的状态。" },
-    { key:"personal_influence_2", text:"我觉得我在任务中的选择会影响最终环保捐赠。" },
-    { key:"personal_influence_3", text:"我觉得自己的行为能够帮助公共森林维持下去。" }
-  ]},
-  { title:"其他成员影响与共同结果感知", intro:"以下题目已调整为3人任务语境。1=非常不同意，7=非常同意。", items:[
-    { key:"partner_influence_1", text:"我觉得其他成员的选择会影响我的捐赠决策。" },
-    { key:"partner_influence_2", text:"我会根据其他成员上一轮的捐赠情况调整自己的选择。" },
-    { key:"partner_influence_3", text:"我觉得我们三人的选择共同决定了公共森林的结果。" }
-  ]},
-  { title:"任务认真度与实验感受", intro:"请根据你的真实感受作答。数字越大表示越接近右侧描述。", items:[
-    { key:"seriousness", text:"你在任务中是否认真做出了选择？", left:"非常不认真", right:"非常认真" },
-    { key:"suspicion", text:"你是否怀疑任务中的信息或设置？", left:"完全不怀疑", right:"非常怀疑" },
-    { key:"noticed_stage_difference", text:"你是否注意到两个任务阶段之间存在不同？", left:"完全没有注意到", right:"非常明显地注意到" },
-    { key:"background_info_influence", text:"你认为任务开始前的背景信息是否影响了你的选择？", left:"完全没有影响", right:"影响非常大" }
-  ]}
-];
-
-function scaleHTML(item) {
-  const left = item.left || "非常不同意";
-  const right = item.right || "非常同意";
-  return `<div class="scale-item"><p><b>${item.text}</b></p><div class="scale-options">${[1,2,3,4,5,6,7].map(v=>`<label><input type="radio" name="${item.key}" value="${v}"><br>${v}</label>`).join("")}</div><div class="scale-anchors"><span>${left}</span><span>${right}</span></div></div>`;
-}
-
-function pageQuestionnaire(groupIdx) {
-  const g = questionnaireGroups[groupIdx];
-  render(`<p><b>请根据你现在的感受，选择符合你的同意程度。</b></p><p class="muted">1 表示非常不同意或非常不符合，7 表示非常同意或非常符合。请按照第一反应作答。</p>${g.items.map(scaleHTML).join("")}<button id="go">${groupIdx < questionnaireGroups.length-1 ? "下一页" : "提交问卷"}</button>`);
-  document.getElementById("go").onclick = async () => {
-    for (const item of g.items) {
-      const v = document.querySelector(`input[name="${item.key}"]:checked`)?.value;
-      if (!v) return alert("请完成本页所有题目。");
-      state.questionnaireResponses[item.key] = Number(v);
+    function scaleItem(item) {
+      const left = item.left || "非常不同意";
+      const right = item.right || "非常同意";
+      return `
+        <div class="scale-row">
+          <p>${escapeHtml(item.text)}</p>
+          <div class="scale-anchor"><span>${escapeHtml(left)}</span><span>${escapeHtml(right)}</span></div>
+          <div class="scale-options">
+            ${[1,2,3,4,5,6,7].map(v => `
+              <label><input type="radio" name="${item.key}" value="${v}"><br>${v}</label>
+            `).join("")}
+          </div>
+        </div>
+      `;
     }
-    if (groupIdx < questionnaireGroups.length-1) pageQuestionnaire(groupIdx+1);
-    else {
-      await dbSet(`groups/${state.groupId}/members/${state.participantId}/questionnaire`, { ...state.questionnaireResponses, submittedAt: await dbServerTimestamp() });
-      pageEnd();
+
+    function pageQuestionnaire(pageIndex, answers) {
+      const pageSize = 5;
+      const totalPages = Math.ceil(questionnaireItems.length / pageSize);
+      const start = pageIndex * pageSize;
+      const items = questionnaireItems.slice(start, start + pageSize);
+      render(`
+        <p class="muted">问卷 ${pageIndex + 1} / ${totalPages}</p>
+        <p><b>请根据你现在的感受，选择符合你的同意程度。</b></p>
+        <p class="muted">1 表示最左侧描述，7 表示最右侧描述。请选择最符合你当前感受的选项。</p>
+        ${items.map(scaleItem).join("")}
+        <button id="prevBtn" class="secondary" ${pageIndex === 0 ? "style='display:none'" : ""}>上一页</button>
+        <button id="nextBtn">${pageIndex === totalPages - 1 ? "提交问卷" : "下一页"}</button>
+      `);
+      if (pageIndex > 0) {
+        document.getElementById("prevBtn").onclick = () => pageQuestionnaire(pageIndex - 1, answers);
+      }
+      document.getElementById("nextBtn").onclick = async () => {
+        const newAnswers = { ...answers };
+        for (const item of items) {
+          const v = document.querySelector(`input[name="${item.key}"]:checked`)?.value;
+          if (!v) {
+            alert("请完成本页所有题目。");
+            return;
+          }
+          newAnswers[item.key] = Number(v);
+        }
+        if (pageIndex < totalPages - 1) {
+          pageQuestionnaire(pageIndex + 1, newAnswers);
+        } else {
+          await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}/questionnaire`), {
+            ...newAnswers,
+            submittedAt: serverTimestamp()
+          });
+          pageEnd();
+        }
+      };
     }
-  };
-}
 
-async function pageEnd() {
-  await dbUpdate(`groups/${state.groupId}/members/${state.participantId}`, { completed:true, completedAt: await dbServerTimestamp(), last_page:"completed" });
-  render(`<h1>实验结束</h1><p>你已经完成本实验的全部内容。</p><p>感谢你对本研究的支持！</p><p>请不要与其他可能参加实验的人讨论实验内容，以免影响后续研究结果。</p><div class="greenbox"><p>你的完成编号：</p><p><b>${state.participantId}</b></p></div>`);
-}
+    async function pageEnd() {
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
+        completed: true,
+        completedAt: serverTimestamp(),
+        last_page: "completed"
+      });
+      render(`
+        <h1>实验结束</h1>
+        <p>你已经完成本实验的全部内容。</p>
+        <p>感谢你对本研究的支持！</p>
+        <p>请不要与其他可能参加实验的人讨论实验内容，以免影响后续研究结果。</p>
+        <div class="highlight">
+          <p>你的完成编号：</p>
+          <p><b>${state.participantId}</b></p>
+        </div>
+      `);
+    }
 
-pageWelcome();
-</script>
+    pageWelcome();
+  </script>
 </body>
 </html>
