@@ -94,6 +94,25 @@
       border-color: #bbf7d0;
       border-left-color: #16a34a;
     }
+    .static-cue p, .static-cue b,
+    .dynamic-cue p, .dynamic-cue b,
+    .norm-red-text, .norm-red-text b,
+    .norm-red-box, .norm-red-box p, .norm-red-box b {
+      color: #d00000 !important;
+      font-weight: 800 !important;
+    }
+    .norm-red-box {
+      background: #fff1f2 !important;
+      border-left-color: #d00000 !important;
+    }
+    .timeout-box {
+      background: #fef2f2;
+      border-left: 5px solid #dc2626;
+      padding: 16px 18px;
+      margin: 20px 0;
+      border-radius: 10px;
+      font-size: 16px;
+    }
     .warning {
       background: #fff7ed;
       border-left: 5px solid #f97316;
@@ -178,7 +197,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <div class="version">V13 GitHub Pages · decision norm cue</div>
+  <div class="version">V15 GitHub Pages · timeout summary red norm</div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -207,12 +226,15 @@
     const fbApp = initializeApp(firebaseConfig);
     const db = getDatabase(fbApp);
 
-    const BASE_PATH = "public_forest_3person_v14_decision_text_update";
+    const BASE_PATH = "public_forest_3person_v15_timeout_summary_rednorm";
     const GROUP_SIZE = 3;
     const BLOCKS = 2;
     const TRIALS_PER_BLOCK = 8;
     const BLOCK_TARGET = 120;
     const MATCH_TIMEOUT_MS = 5 * 60 * 1000;
+    const READY_TIMEOUT_MS = 3 * 60 * 1000;
+    const CHOICE_TIMEOUT_MS = 3 * 60 * 1000;
+    const HEARTBEAT_INTERVAL_MS = 10 * 1000;
     const CONDITIONS = ["control", "static", "dynamic"];
 
     const PROJECTS = [
@@ -277,7 +299,10 @@
       currentBlock: 1,
       currentTrial: 1,
       selectedDonation: null,
-      trialStartTime: null
+      trialStartTime: null,
+      possibleRepeat: false,
+      heartbeatTimer: null,
+      groupAbortUnsubscribe: null
     };
 
     const appDiv = document.getElementById("app");
@@ -325,6 +350,164 @@
       return snap.val() || {};
     }
 
+
+    function startHeartbeat() {
+      if (state.heartbeatTimer) clearInterval(state.heartbeatTimer);
+      updateHeartbeat();
+      state.heartbeatTimer = setInterval(updateHeartbeat, HEARTBEAT_INTERVAL_MS);
+      if (!state.groupAbortUnsubscribe && state.groupId) listenForGroupAbort();
+    }
+
+    async function updateHeartbeat(extra = {}) {
+      if (!state.groupId || !state.participantId) return;
+      try {
+        await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
+          last_seen_ms: Date.now(),
+          last_seen: serverTimestamp(),
+          is_online: true,
+          ...extra
+        });
+      } catch (e) {
+        console.warn("heartbeat failed", e);
+      }
+    }
+
+    function stopHeartbeat() {
+      if (state.heartbeatTimer) {
+        clearInterval(state.heartbeatTimer);
+        state.heartbeatTimer = null;
+      }
+    }
+
+    window.addEventListener("beforeunload", () => {
+      if (state.groupId && state.participantId) {
+        update(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
+          is_online: false,
+          left_at_ms: Date.now()
+        });
+      }
+    });
+
+    function listenForGroupAbort() {
+      if (!state.groupId) return;
+      const statusRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/status`);
+      state.groupAbortUnsubscribe = onValue(statusRef, (snap) => {
+        const status = snap.val();
+        if (status === "partner_dropped" || status === "match_timeout") {
+          pageTerminated(
+            "实验无法继续",
+            "有小组成员长时间未进入下一步或连接中断，本组实验已终止。",
+            status === "match_timeout" ? "UNMATCHED" : "PARTNER_DROPPED"
+          );
+        }
+      });
+    }
+
+    async function abortGroup(reason, stage) {
+      if (!state.groupId || !state.participantId) return;
+      const status = stage === "matching" ? "match_timeout" : "partner_dropped";
+      const payload = {
+        status,
+        dropout_reason: reason,
+        dropout_stage: stage,
+        dropout_by: state.participantId,
+        dropout_at_ms: Date.now(),
+        dropoutAt: serverTimestamp()
+      };
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}`), payload);
+      await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
+        exit_code: status === "match_timeout" ? "UNMATCHED" : "PARTNER_DROPPED",
+        last_page: stage,
+        ended_early: true,
+        endedAt: serverTimestamp()
+      });
+      await saveParticipantSummary(false, status);
+    }
+
+    function makeWaitTimeout(stage, ms) {
+      return setTimeout(async () => {
+        try {
+          await abortGroup("wait_timeout", stage);
+        } finally {
+          pageTerminated(
+            "等待超时",
+            "由于其他成员长时间未完成当前步骤，本组实验已自动终止。请联系实验人员或重新安排实验。",
+            stage === "matching" ? "UNMATCHED" : "PARTNER_DROPPED"
+          );
+        }
+      }, ms);
+    }
+
+    function pageTerminated(title, message, code) {
+      stopHeartbeat();
+      render(`
+        <h1>${title}</h1>
+        <div class="timeout-box">
+          <p>${message}</p>
+          <p>结束代码：<b>${code}</b></p>
+        </div>
+        <p>你的参与编号：</p>
+        <div class="highlight"><b>${state.participantId || ""}</b></div>
+      `);
+    }
+
+    async function saveParticipantSummary(completed, reason = "") {
+      if (!state.participantId) return;
+      let totalDonation = 0;
+      let totalPersonal = 0;
+      let totalTrials = 0;
+      let ge5Count = 0;
+      let highCount = 0;
+      let rtSum = 0;
+      let rtN = 0;
+      try {
+        const groupData = state.groupId ? await getGroupData() : {};
+        for (let b = 1; b <= BLOCKS; b++) {
+          for (let t = 1; t <= TRIALS_PER_BLOCK; t++) {
+            const ch = groupData?.blocks?.[`block_${b}`]?.trials?.[`trial_${t}`]?.choices?.[state.participantId];
+            if (ch) {
+              const d = Number(ch.donation || 0);
+              totalDonation += d;
+              totalPersonal += Number(ch.personal_points || 0);
+              totalTrials += 1;
+              if (d >= 5) ge5Count += 1;
+              if (d >= 8) highCount += 1;
+              if (ch.response_time_ms !== undefined) {
+                rtSum += Number(ch.response_time_ms || 0);
+                rtN += 1;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("summary calculation failed", e);
+      }
+      const summary = {
+        participantId: state.participantId,
+        groupId: state.groupId || null,
+        groupNumber: state.groupNumber || null,
+        condition: state.condition || null,
+        roleId: state.roleId || null,
+        slot: state.slot || null,
+        info: state.info || {},
+        completed,
+        incomplete_reason: reason || null,
+        total_trials_completed: totalTrials,
+        expected_trials: BLOCKS * TRIALS_PER_BLOCK,
+        questionnaire_completed: completed,
+        total_donation: totalDonation,
+        mean_donation: totalTrials ? Number((totalDonation / totalTrials).toFixed(3)) : null,
+        total_personal_points: totalPersonal,
+        donation_ge5_count: ge5Count,
+        high_donation_ge8_count: highCount,
+        mean_response_time_ms: rtN ? Number((rtSum / rtN).toFixed(1)) : null,
+        possible_repeat: state.possibleRepeat,
+        last_page_saved_at_ms: Date.now(),
+        updatedAt: serverTimestamp()
+      };
+      await set(ref(db, `${BASE_PATH}/summary/participants/${state.participantId}`), summary);
+    }
+
     function pageWelcome() {
       render(`
         <h1>欢迎参加实验</h1>
@@ -350,8 +533,8 @@
     function pageBasicInfo() {
       render(`
         <h1>基本信息</h1>
-        <label>姓名 </label>
-        <input id="name" placeholder="请输入姓名" />
+        <label>姓名 / 编号</label>
+        <input id="name" placeholder="请输入姓名或编号" />
         <label>年龄</label>
         <input id="age" type="number" placeholder="请输入年龄" />
         <label>性别</label>
@@ -381,6 +564,12 @@
           alert("请至少填写姓名/编号、年龄和性别。");
           return;
         }
+        state.possibleRepeat = Boolean(localStorage.getItem("public_forest_3person_started"));
+        if (state.possibleRepeat) {
+          const ok = confirm("系统检测到这个浏览器可能已经参加过本实验。正式实验中请勿重复参加。若这是测试，请点击确定继续。");
+          if (!ok) return;
+        }
+        localStorage.setItem("public_forest_3person_started", String(Date.now()));
         state.participantId = uid("P");
         state.info = { name, age, gender, school, major, grade };
         await joinGroup();
@@ -449,6 +638,7 @@
         roleId: state.roleId,
         slot: state.slot,
         info: state.info,
+        possible_repeat: state.possibleRepeat,
         joinedAt: serverTimestamp(),
         last_page: "matched"
       });
@@ -461,8 +651,11 @@
         roleId: state.roleId,
         slot: state.slot,
         info: state.info,
+        possible_repeat: state.possibleRepeat,
         joinedAt: serverTimestamp()
       });
+
+      startHeartbeat();
 
       if (matchData.status === "full") {
         await update(ref(db, `${BASE_PATH}/groups/${state.groupId}`), {
@@ -477,6 +670,7 @@
     function listenForGroupFull() {
       const membersRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/members`);
       let moved = false;
+      const waitTimer = makeWaitTimeout("matching", MATCH_TIMEOUT_MS);
       const unsubscribe = onValue(membersRef, async (snap) => {
         const members = snap.val() || {};
         const count = Object.keys(members).length;
@@ -484,6 +678,7 @@
         if (statusEl) statusEl.textContent = `当前状态：等待成员加入（${count}/${GROUP_SIZE}）`;
         if (!moved && count >= GROUP_SIZE) {
           moved = true;
+          clearTimeout(waitTimer);
           unsubscribe();
           await update(ref(db, `${BASE_PATH}/groups/${state.groupId}`), { status: "full", formedAt: serverTimestamp() });
           pageGroupIntro();
@@ -639,11 +834,11 @@
           <h1>前期参与者数据</h1>
           ${intro}
           <p>最近一批同类任务数据显示：</p>
-          <div class="highlight">
+          <div class="highlight norm-red-box">
             <p><b>约有 30% 的参与者在多数轮次中选择向公共森林账户投入 5 点及以上。</b></p>
           </div>
           <p>这意味着，在当前参与者中，每 10 个人中大约有 3 个人会在多数轮次中向公共森林账户投入较多个人资源。</p>
-          <p><b>同时，前期调查显示，这一比例在过去一段时间里基本保持稳定，并没有出现明显变化。</b></p>
+          <p class="norm-red-text"><b>同时，前期调查显示，这一比例在过去一段时间里基本保持稳定，并没有出现明显变化。</b></p>
           <p>这一数据反映了最近一批参与者在公共森林投入任务中的选择情况。</p>
           <p>请认真阅读以上信息。阅读完成后，请继续完成接下来的公共森林投入任务。</p>
         `;
@@ -652,12 +847,12 @@
         <h1>前期参与者数据</h1>
         ${intro}
         <p>前期不同批次的同类任务数据显示：</p>
-        <div class="highlight">
+        <div class="highlight norm-red-box">
           <p><b>选择向公共森林账户投入 5 点及以上，正在成为越来越多参与者愿意做出的选择。</b></p>
         </div>
-        <p>具体来说，选择向公共森林账户投入较多个人资源的参与者比例，已经从较早一批的 <b>5%</b> 上升到最近一批的 <b>30%</b>。</p>
-        <p>这意味着，与过去相比，现在有更多参与者愿意在多数轮次中把较多个人资源投入公共森林账户。该比例增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p>
-        <div class="highlight">
+        <p class="norm-red-text">具体来说，选择向公共森林账户投入较多个人资源的参与者比例，已经从较早一批的 <b>5%</b> 上升到最近一批的 <b>30%</b>。</p>
+        <p class="norm-red-text">这意味着，与过去相比，现在有更多参与者愿意在多数轮次中把较多个人资源投入公共森林账户。该比例增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p>
+        <div class="highlight norm-red-box">
           <p><b>这一变化表明：</b></p>
           <p><b>向公共森林账户投入较多资源，正在变得越来越普遍。</b></p>
           <p><b>越来越多参与者愿意为了公共森林保护而投入更多个人资源。</b></p>
@@ -758,6 +953,7 @@
         <div class="warning" id="readyStatus">等待其他成员准备……</div>
       `);
       let moved = false;
+      const waitTimer = makeWaitTimeout(`block_${blockIndex}_trial_${trialIndex}_ready`, READY_TIMEOUT_MS);
       const readyRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/ready/block_${blockIndex}/trial_${trialIndex}`);
       const unsubscribe = onValue(readyRef, (snap) => {
         const readyData = snap.val() || {};
@@ -766,6 +962,7 @@
         if (el) el.textContent = `当前已准备：${count}/${GROUP_SIZE}`;
         if (!moved && count >= GROUP_SIZE) {
           moved = true;
+          clearTimeout(waitTimer);
           unsubscribe();
           pageDecision(blockIndex, trialIndex);
         }
@@ -784,8 +981,8 @@
       if (condition === "static") {
         return `
           <div class="norm-cue">
-            <div class="cue-title">参与者数据提示</div>
-            <p>约有 <b>30%</b> 的参与者在多数轮次中选择向公共森林账户投入 <b>5 点及以上</b>。</p>
+            <div class="cue-title">前期参与者数据提示</div>
+            <p>最近一批同类任务数据显示，约有 <b>30%</b> 的参与者在多数轮次中选择向公共森林账户投入 <b>5 点及以上</b>。</p>
             <p>前期调查显示，这一比例在过去一段时间里基本保持稳定，没有出现明显变化。</p>
           </div>
         `;
@@ -795,7 +992,7 @@
           <div class="cue-title">前期参与者数据提示</div>
           <p><b>向公共森林账户投入 5 点及以上，正在成为越来越多参与者愿意做出的选择。</b></p>
           <p>这一比例已经从较早一批的 <b>5%</b> 上升到最近一批的 <b>30%</b>，增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p>
-          <p>这种变化继续发展，未来可能会有更多参与者愿意为公共森林保护投入较多个人资源。</p>
+          <p>如果这种变化继续发展，未来可能会有更多参与者愿意为公共森林保护投入较多个人资源。</p>
         </div>
       `;
     }
@@ -894,8 +1091,10 @@
         const personal = 10 - donation;
         const rt = Date.now() - state.trialStartTime;
 
-        await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}/choices/${state.participantId}`), {
+        const decisionRecord = {
           participantId: state.participantId,
+          groupId: state.groupId,
+          groupNumber: state.groupNumber,
           roleId: state.roleId,
           slot: state.slot,
           donation,
@@ -905,7 +1104,10 @@
           trialIndex,
           condition: state.condition,
           submittedAt: serverTimestamp()
-        });
+        };
+
+        await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}/choices/${state.participantId}`), decisionRecord);
+        await set(ref(db, `${BASE_PATH}/trial_records/${state.groupId}_${state.participantId}_b${blockIndex}_t${trialIndex}`), decisionRecord);
 
         pageWaitForChoices(blockIndex, trialIndex);
       };
@@ -919,6 +1121,7 @@
         <div class="warning" id="choiceStatus">等待其他成员提交……</div>
       `);
       let moved = false;
+      const waitTimer = makeWaitTimeout(`block_${blockIndex}_trial_${trialIndex}_choice`, CHOICE_TIMEOUT_MS);
       const choicesRef = ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}/choices`);
       const unsubscribe = onValue(choicesRef, (snap) => {
         const choices = snap.val() || {};
@@ -927,6 +1130,7 @@
         if (el) el.textContent = `当前已提交：${count}/${GROUP_SIZE}`;
         if (!moved && count >= GROUP_SIZE) {
           moved = true;
+          clearTimeout(waitTimer);
           unsubscribe();
           pageTrialFeedback(blockIndex, trialIndex);
         }
@@ -1080,8 +1284,12 @@
       await update(ref(db, `${BASE_PATH}/groups/${state.groupId}/members/${state.participantId}`), {
         completed: true,
         completedAt: serverTimestamp(),
-        last_page: "completed"
+        last_page: "completed",
+        is_online: false
       });
+      await saveParticipantSummary(true, "");
+      localStorage.setItem("public_forest_3person_completed", String(Date.now()));
+      stopHeartbeat();
       render(`
         <h1>实验结束</h1>
         <p>你已经完成本实验的全部内容。</p>
