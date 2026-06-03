@@ -315,8 +315,8 @@
     function pageBasicInfo() {
       render(`
         <h1>基本信息</h1>
-        <label>姓名 / 编号</label>
-        <input id="name" placeholder="请输入姓名或编号" />
+        <label>姓名 </label>
+        <input id="name" placeholder="请输入姓名" />
         <label>年龄</label>
         <input id="age" type="number" placeholder="请输入年龄" />
         <label>性别</label>
@@ -654,14 +654,14 @@
       } else if (state.condition === "static") {
         options = `
           <label><input type="radio" name="cq" value="A">A. 最近一批参与者中，约有 30% 的人多数轮次向公共森林账户投入 5 点及以上，并且这一比例基本保持稳定</label><br>
-          <label><input type="radio" name="cq" value="B">B. 选择投入公共森林账户的人正在明显增加</label><br>
+          <label><input type="radio" name="cq" value="B">B. 选择投入公共森林账户的人正在明显减少</label><br>
           <label><input type="radio" name="cq" value="C">C. 未来一定会有更多人投入公共森林账户</label>`;
         correct = "A";
       } else {
         options = `
           <label><input type="radio" name="cq" value="A">A. 最近一批参与者中，有固定比例的人投入公共森林账户</label><br>
           <label><input type="radio" name="cq" value="B">B. 越来越多参与者正在选择向公共森林账户投入较多资源，这一比例从 5% 上升到 30%</label><br>
-          <label><input type="radio" name="cq" value="C">C. 所有参与者都会向公共森林账户投入较多资源</label>`;
+          <label><input type="radio" name="cq" value="C">C. 越来越少参与者正在选择向公共森林账户投入较多资源</label>`;
         correct = "B";
       }
       render(`
