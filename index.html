@@ -350,8 +350,8 @@
     function pageBasicInfo() {
       render(`
         <h1>基本信息</h1>
-        <label>姓名 / 编号</label>
-        <input id="name" placeholder="请输入姓名或编号" />
+        <label>姓名 </label>
+        <input id="name" placeholder="请输入姓名" />
         <label>年龄</label>
         <input id="age" type="number" placeholder="请输入年龄" />
         <label>性别</label>
@@ -784,8 +784,8 @@
       if (condition === "static") {
         return `
           <div class="norm-cue">
-            <div class="cue-title">前期参与者数据提示</div>
-            <p>最近一批同类任务数据显示，约有 <b>30%</b> 的参与者在多数轮次中选择向公共森林账户投入 <b>5 点及以上</b>。</p>
+            <div class="cue-title">参与者数据提示</div>
+            <p>约有 <b>30%</b> 的参与者在多数轮次中选择向公共森林账户投入 <b>5 点及以上</b>。</p>
             <p>前期调查显示，这一比例在过去一段时间里基本保持稳定，没有出现明显变化。</p>
           </div>
         `;
@@ -795,7 +795,7 @@
           <div class="cue-title">前期参与者数据提示</div>
           <p><b>向公共森林账户投入 5 点及以上，正在成为越来越多参与者愿意做出的选择。</b></p>
           <p>这一比例已经从较早一批的 <b>5%</b> 上升到最近一批的 <b>30%</b>，增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p>
-          <p>如果这种变化继续发展，未来可能会有更多参与者愿意为公共森林保护投入较多个人资源。</p>
+          <p>这种变化继续发展，未来可能会有更多参与者愿意为公共森林保护投入较多个人资源。</p>
         </div>
       `;
     }
