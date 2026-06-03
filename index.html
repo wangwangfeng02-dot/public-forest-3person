@@ -59,6 +59,41 @@
       font-size: 17px;
       line-height: 1.8;
     }
+    .norm-cue {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 5px solid #16a34a;
+      padding: 14px 16px;
+      margin: 18px 0 22px;
+      border-radius: 10px;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+    .norm-cue .cue-title {
+      font-weight: bold;
+      color: #14532d;
+      margin-bottom: 6px;
+    }
+    .norm-cue p {
+      margin: 4px 0;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+    .control-cue {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      border-left-color: #94a3b8;
+    }
+    .static-cue {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      border-left-color: #64748b;
+    }
+    .dynamic-cue {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+      border-left-color: #16a34a;
+    }
     .warning {
       background: #fff7ed;
       border-left: 5px solid #f97316;
@@ -143,7 +178,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <div class="version">V12 GitHub Pages · norm text updated</div>
+  <div class="version">V13 GitHub Pages · decision norm cue</div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -172,7 +207,7 @@
     const fbApp = initializeApp(firebaseConfig);
     const db = getDatabase(fbApp);
 
-    const BASE_PATH = "public_forest_3person_v12_norm_update";
+    const BASE_PATH = "public_forest_3person_v14_decision_text_update";
     const GROUP_SIZE = 3;
     const BLOCKS = 2;
     const TRIALS_PER_BLOCK = 8;
@@ -315,8 +350,8 @@
     function pageBasicInfo() {
       render(`
         <h1>基本信息</h1>
-        <label>姓名 </label>
-        <input id="name" placeholder="请输入姓名" />
+        <label>姓名 / 编号</label>
+        <input id="name" placeholder="请输入姓名或编号" />
         <label>年龄</label>
         <input id="age" type="number" placeholder="请输入年龄" />
         <label>性别</label>
@@ -654,14 +689,14 @@
       } else if (state.condition === "static") {
         options = `
           <label><input type="radio" name="cq" value="A">A. 最近一批参与者中，约有 30% 的人多数轮次向公共森林账户投入 5 点及以上，并且这一比例基本保持稳定</label><br>
-          <label><input type="radio" name="cq" value="B">B. 选择投入公共森林账户的人正在明显减少</label><br>
+          <label><input type="radio" name="cq" value="B">B. 选择投入公共森林账户的人正在明显增加</label><br>
           <label><input type="radio" name="cq" value="C">C. 未来一定会有更多人投入公共森林账户</label>`;
         correct = "A";
       } else {
         options = `
           <label><input type="radio" name="cq" value="A">A. 最近一批参与者中，有固定比例的人投入公共森林账户</label><br>
           <label><input type="radio" name="cq" value="B">B. 越来越多参与者正在选择向公共森林账户投入较多资源，这一比例从 5% 上升到 30%</label><br>
-          <label><input type="radio" name="cq" value="C">C. 越来越少参与者正在选择向公共森林账户投入较多资源</label>`;
+          <label><input type="radio" name="cq" value="C">C. 所有参与者都会向公共森林账户投入较多资源</label>`;
         correct = "B";
       }
       render(`
@@ -737,38 +772,128 @@
       });
     }
 
+    function decisionNormCueHtml(condition) {
+      if (condition === "control") {
+        return `
+          <div class="norm-cue">
+            <div class="cue-title">任务提示</div>
+            <p>公共森林账户代表一项环境保护资源。你可以根据自己的真实想法决定本轮投入多少个人资源。</p>
+          </div>
+        `;
+      }
+      if (condition === "static") {
+        return `
+          <div class="norm-cue">
+            <div class="cue-title">前期参与者数据提示</div>
+            <p>最近一批同类任务数据显示，约有 <b>30%</b> 的参与者在多数轮次中选择向公共森林账户投入 <b>5 点及以上</b>。</p>
+            <p>前期调查显示，这一比例在过去一段时间里基本保持稳定，没有出现明显变化。</p>
+          </div>
+        `;
+      }
+      return `
+        <div class="norm-cue">
+          <div class="cue-title">前期参与者数据提示</div>
+          <p><b>向公共森林账户投入 5 点及以上，正在成为越来越多参与者愿意做出的选择。</b></p>
+          <p>这一比例已经从较早一批的 <b>5%</b> 上升到最近一批的 <b>30%</b>，增加了 <b>25 个百分点</b>，达到较早一批的 <b>6 倍</b>。</p>
+          <p>如果这种变化继续发展，未来可能会有更多参与者愿意为公共森林保护投入较多个人资源。</p>
+        </div>
+      `;
+    }
+
     async function pageDecision(blockIndex, trialIndex) {
       state.selectedDonation = null;
       state.trialStartTime = Date.now();
+
       await saveProgress("decision", { blockIndex, trialIndex });
+
+      let normCue = "";
+
+      if (state.condition === "control") {
+        normCue = `
+          <div class="norm-cue control-cue">
+            <p><b>任务提示：</b></p>
+            <p>请根据自己的真实想法决定本轮向公共森林账户投入多少资源。</p>
+          </div>
+        `;
+      }
+
+      if (state.condition === "static") {
+        normCue = `
+          <div class="norm-cue static-cue">
+            <p><b>参与者数据提示：</b></p>
+            <p>
+              约有 <b>30%</b> 的参与者选择向公共森林账户投入较多的资源。
+            </p>
+            <p>
+              前期调查显示，这一比例在过去一段时间里基本保持稳定，
+              并没有出现明显变化。
+            </p>
+          </div>
+        `;
+      }
+
+      if (state.condition === "dynamic") {
+        normCue = `
+          <div class="norm-cue dynamic-cue">
+            <p><b>前期参与者数据提示：</b></p>
+            <p>
+              越来越多的参与者选择向公共森林账户投入较多资源。
+            </p>
+          </div>
+        `;
+      }
+
       render(`
         <h1>项目 ${blockIndex} / ${BLOCKS}，第 ${trialIndex} / ${TRIALS_PER_BLOCK} 轮</h1>
+
+        ${normCue}
+
         <p>本轮你获得 <b>10 点资源</b>。</p>
-        <p>请在 0–10 点之间选择你愿意投入公共森林账户的资源点数。未投入公共森林账户的资源点将保留为你的个人积分。</p>
+
+        <p>
+          请在 0–10 点之间选择你愿意投入公共森林账户的资源点数。
+          未投入公共森林账户的资源点将保留为你的个人积分。
+        </p>
+
         <p><b>请选择你本轮投入公共森林账户的资源点数：</b></p>
+
         <div class="choice-grid" id="choiceGrid">
-          ${Array.from({ length: 11 }, (_, i) => `<div class="choice-btn" data-value="${i}">${i}</div>`).join("")}
+          ${Array.from({ length: 11 }, (_, i) => `
+            <div class="choice-btn" data-value="${i}">${i}</div>
+          `).join("")}
         </div>
+
         <div class="highlight" id="choiceDisplay">你尚未选择。</div>
+
         <button id="confirmBtn">确认选择</button>
       `);
+
       document.querySelectorAll(".choice-btn").forEach(btn => {
         btn.onclick = () => {
           document.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
           btn.classList.add("selected");
+
           state.selectedDonation = Number(btn.dataset.value);
-          document.getElementById("choiceDisplay").innerHTML =
-            `你本轮选择投入：<b>${state.selectedDonation}</b> 点<br>你本轮保留个人积分：<b>${10 - state.selectedDonation}</b> 分`;
+
+          document.getElementById("choiceDisplay").innerHTML = `
+            你本轮选择投入公共森林账户：
+            <b>${state.selectedDonation} 点</b><br>
+            你本轮保留个人积分：
+            <b>${10 - state.selectedDonation} 分</b>
+          `;
         };
       });
+
       document.getElementById("confirmBtn").onclick = async () => {
         if (state.selectedDonation === null) {
-          alert("请选择 0–10 点中的一个数值。");
+          alert("请选择你本轮愿意投入的资源点数。");
           return;
         }
+
         const donation = state.selectedDonation;
         const personal = 10 - donation;
         const rt = Date.now() - state.trialStartTime;
+
         await set(ref(db, `${BASE_PATH}/groups/${state.groupId}/blocks/block_${blockIndex}/trials/trial_${trialIndex}/choices/${state.participantId}`), {
           participantId: state.participantId,
           roleId: state.roleId,
@@ -781,6 +906,7 @@
           condition: state.condition,
           submittedAt: serverTimestamp()
         });
+
         pageWaitForChoices(blockIndex, trialIndex);
       };
     }
